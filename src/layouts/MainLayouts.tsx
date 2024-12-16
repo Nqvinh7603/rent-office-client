@@ -1,13 +1,13 @@
-import Header from "../common/Header";
+import Footer from "../common/Footer";
+import Header from "../common/Headers/Header";
 
 const MainLayout: React.FC = () => {
   return (
-    //   <div className="flex min-h-screen flex-col">
-    // <Header />
-
-    // <Footer />
-    //   </div>
-    <Header />
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <div className="flex-grow"></div>
+      <Footer />
+    </div>
   );
 };
 
