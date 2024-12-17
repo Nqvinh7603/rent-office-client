@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer components {
+  :root {
+    --color-primary: #3162ad;
+  }
   *,
   *:before,
   *:after {

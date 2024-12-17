@@ -27,7 +27,14 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <ConfigProvider locale={viVN}>
+    <ConfigProvider
+      locale={viVN}
+      theme={{
+        token: {
+          colorPrimary: "#3162ad",
+        },
+      }}
+    >
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
         <AppRouter />

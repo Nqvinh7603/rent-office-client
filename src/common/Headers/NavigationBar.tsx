@@ -1,6 +1,6 @@
+import { DownOutlined, HomeOutlined } from "@ant-design/icons";
 import { Dropdown, Menu } from "antd";
-import React from "react";
-import { HomeOutlined, DownOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
 
 const NavigationBar: React.FC = () => {
   const menu = (
@@ -14,10 +14,30 @@ const NavigationBar: React.FC = () => {
     </Menu>
   );
 
+  const [isSticky, setIsSticky] = useState(false);
+
+  // Hàm xử lý sự kiện cuộn trang
+  const handleScroll = () => {
+    const scrollTop = window.scrollY;
+    const stickyThreshold = 100;
+    setIsSticky(scrollTop > stickyThreshold);
+  };
+
+  // Gắn và gỡ bỏ sự kiện cuộn trang
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <>
-      {/* Navigation Bar */}
-      <nav className="bg-[#3162ad] py-4">
+    <div>
+      <nav
+        className={`w-full bg-[var(--color-primary)] py-4 transition-all duration-300 ${
+          isSticky ? "fixed top-0 z-50 shadow-md" : "relative"
+        }`}
+      >
         <div className="container mx-auto flex items-center justify-center px-4">
           <ul className="flex space-x-6 font-medium text-white">
             <li>
@@ -87,7 +107,7 @@ const NavigationBar: React.FC = () => {
           </ul>
         </div>
       </nav>
-    </>
+    </div>
   );
 };
 export default NavigationBar;

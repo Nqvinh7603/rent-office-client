@@ -11,10 +11,8 @@ import NavigationBar from "./NavigationBar";
 const Header: React.FC = () => {
   return (
     <header className="shadow-md">
-      {/* Top Section */}
       <div className="bg-white py-4">
         <div className="container mx-auto flex items-center justify-between">
-          {/* Logo */}
           <div className="flex items-center">
             <a href="/">
               <img
@@ -25,7 +23,6 @@ const Header: React.FC = () => {
             </a>
           </div>
 
-          {/* Contact Information */}
           <div className="hidden space-x-14 text-gray-700 md:flex">
             <div className="flex items-center">
               <ClockCircleOutlined className="mr-2 text-2xl" />
