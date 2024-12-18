@@ -19,7 +19,7 @@ const NavigationBar: React.FC = () => {
   // Hàm xử lý sự kiện cuộn trang
   const handleScroll = () => {
     const scrollTop = window.scrollY;
-    const stickyThreshold = 100;
+    const stickyThreshold = 75;
     setIsSticky(scrollTop > stickyThreshold);
   };
 
@@ -35,7 +35,9 @@ const NavigationBar: React.FC = () => {
     <div>
       <nav
         className={`w-full bg-[var(--color-primary)] py-4 transition-all duration-300 ${
-          isSticky ? "fixed top-0 z-50 shadow-md" : "relative"
+          isSticky
+            ? "fixed top-0 z-50 translate-y-0 transform shadow-lg"
+            : "relative"
         }`}
       >
         <div className="container mx-auto flex items-center justify-center px-4">

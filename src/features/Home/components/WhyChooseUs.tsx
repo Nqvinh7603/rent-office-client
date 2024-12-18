@@ -28,7 +28,7 @@ const WhyChooseUs: React.FC = () => {
   ];
 
   return (
-    <div className="mx-auto my-32 mb-8 w-11/12 text-center lg:w-3/4">
+    <div className="-my-2 mx-auto mb-12 w-11/12 text-center lg:w-3/4">
       {/* Section Title */}
       <h2 className="text-[30px] font-bold leading-tight text-[#3162ad]">
         Lý Do Nên Chọn Cyber Real Làm Đơn Vị Đồng Hành

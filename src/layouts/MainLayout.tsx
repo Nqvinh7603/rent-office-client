@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Footer from "../common/Footer";
+import Footer from "../common/Footers/Footer";
 import Header from "../common/Headers/Header";
 
 const MainLayout: React.FC = () => {

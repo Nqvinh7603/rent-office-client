@@ -5,7 +5,7 @@ const { Option } = Select;
 
 const SearchPanel: React.FC = () => {
   return (
-    <div className="translate-y-15 absolute bottom-44 left-1/2 z-10 w-11/12 -translate-x-1/2 transform rounded-md bg-white p-4 shadow-lg lg:w-3/4">
+    <div className="-translate-y-18 relative bottom-12 left-1/2 z-10 w-11/12 -translate-x-1/2 transform rounded-md bg-white p-4 shadow-lg lg:w-3/4">
       <div className="grid grid-cols-1 items-center gap-4 md:grid-cols-3 lg:grid-cols-4">
         <Input
           placeholder="Nhập tên tòa nhà, ví dụ: Vincom, Vietcombank, International Plaza..."
