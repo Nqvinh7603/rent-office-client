@@ -10,18 +10,15 @@ const DepositForm: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-2">
-      {/* Nút Quay Về Trang Chủ */}
-      <div className="mb-6 flex items-center">
+      <div className="mb-6 flex items-center space-x-2 text-gray-500">
         <Button
-          type="default"
+          type="text"
           icon={<ArrowLeftOutlined />}
           className="flex items-center text-gray-700 hover:text-black"
           onClick={() => navigate("/")}
-        >
-          TRANG CHỦ
-        </Button>
-        <span className="ml-2 text-sm text-gray-400">
-          / KÝ GỬI THÔNG TIN VĂN PHÒNG CHO THUÊ
+        />
+        <span className="text-sm font-medium uppercase">
+          TRANG CHỦ / KÝ GỬI THÔNG TIN VĂN PHÒNG CHO THUÊ
         </span>
       </div>
 

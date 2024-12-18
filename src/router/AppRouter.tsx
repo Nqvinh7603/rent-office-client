@@ -3,6 +3,7 @@ import MainLayout from "../layouts/MainLayout";
 import NotFound from "../pages/NotFound";
 import Home from "../pages/Home";
 import Deposit from "../pages/Deposit";
+import AboutPage from "../common/Footers/AboutPage";
 
 const router = createBrowserRouter([
   {
@@ -15,8 +16,12 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "deposit",
+        path: "/ky-gui",
         element: <Deposit />,
+      },
+      {
+        path: "/gioi-thieu-ve-cyber-real",
+        element: <AboutPage />,
       },
     ],
   },

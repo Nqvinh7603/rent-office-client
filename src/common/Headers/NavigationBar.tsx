@@ -15,15 +15,11 @@ const NavigationBar: React.FC = () => {
   );
 
   const [isSticky, setIsSticky] = useState(false);
-
-  // Hàm xử lý sự kiện cuộn trang
   const handleScroll = () => {
     const scrollTop = window.scrollY;
     const stickyThreshold = 75;
     setIsSticky(scrollTop > stickyThreshold);
   };
-
-  // Gắn và gỡ bỏ sự kiện cuộn trang
   useEffect(() => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
