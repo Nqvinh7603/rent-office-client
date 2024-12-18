@@ -1,10 +1,9 @@
 import React from "react";
-import ContactSection from "../common/Footers/ContactSession";
-import ScrollTop from "../common/ScrollTop";
-import Banner from "../features/Home/components/Banner";
-import OfficeList from "../features/Home/components/OfficeList";
-import SearchPanel from "../features/Home/components/SearchPanel";
-import WhyChooseUs from "../features/Home/components/WhyChooseUs";
+import Banner from "../common/Banner";
+import WhyChooseUs from "../common/WhyChooseUs";
+import NewsSection from "../features/news/components/NewsSection";
+import OfficeList from "../features/office/compoents/OfficeList";
+import SearchPanel from "../features/search-building/components/SearchPanel";
 
 const Home: React.FC = () => {
   return (
@@ -14,7 +13,7 @@ const Home: React.FC = () => {
       <div className="bg-white py-1">
         <WhyChooseUs />
       </div>
-      <ScrollTop />
+
       {Array(3)
         .fill(null)
         .map((_, index) => (
@@ -25,6 +24,10 @@ const Home: React.FC = () => {
             <OfficeList />
           </div>
         ))}
+
+      <div className="bg-white py-1">
+        <NewsSection />
+      </div>
     </div>
   );
 };

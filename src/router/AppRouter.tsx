@@ -1,9 +1,12 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
-import NotFound from "../pages/NotFound";
-import Home from "../pages/Home";
+import AboutPage from "../pages/AboutPage";
+import Contact from "../pages/Contact";
 import Deposit from "../pages/Deposit";
-import AboutPage from "../common/Footers/AboutPage";
+import Home from "../pages/Home";
+import NotFound from "../pages/NotFound";
+import PrivacySecure from "../pages/PrivacySecure";
+import CartPage from "../pages/CartPage";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +25,22 @@ const router = createBrowserRouter([
       {
         path: "/gioi-thieu-ve-cyber-real",
         element: <AboutPage />,
+      },
+      {
+        path: "/chinh-sach-bao-mat",
+        element: <PrivacySecure />,
+      },
+      {
+        path: "/chinh-sach-quyen-rieng-tu",
+        element: <PrivacySecure />,
+      },
+      {
+        path: "/lien-he",
+        element: <Contact />,
+      },
+      {
+        path: "/chon-di-xem",
+        element: <CartPage />,
       },
     ],
   },

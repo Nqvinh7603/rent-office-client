@@ -3,12 +3,11 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 
-const AboutPage: React.FC = () => {
+const AboutContent: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container mx-auto px-4 py-10">
-      {/* Nút Quay Về Trang Chủ */}
+    <div className="container mx-auto px-4 py-10 pt-0">
       <div className="mb-6 flex items-center space-x-2 text-gray-500">
         <Button
           type="text"
@@ -117,4 +116,4 @@ const AboutPage: React.FC = () => {
   );
 };
 
-export default AboutPage;
+export default AboutContent;

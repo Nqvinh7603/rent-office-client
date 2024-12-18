@@ -17,10 +17,9 @@ const Footer: React.FC = () => {
       name: "Giới Thiệu Về Cyber Real",
       path: "/gioi-thieu-ve-cyber-real",
     },
-    { name: "Chính Sách Bảo Mật", path: "/privacy-policy" },
-    { name: "Chính Sách Quyền Riêng Tư", path: "/terms" },
-    { name: "Liên Hệ", path: "/contact" },
-    { name: "Hướng Dẫn Thuê Văn Phòng", path: "/guide" },
+    { name: "Chính Sách Bảo Mật", path: "/chinh-sach-bao-mat" },
+    { name: "Chính Sách Quyền Riêng Tư", path: "/chinh-sach-quyen-rieng-tu" },
+    { name: "Liên Hệ", path: "/lien-he" },
   ];
 
   return (
@@ -64,8 +63,6 @@ const Footer: React.FC = () => {
               ))}
             </div>
           </div>
-
-          {/* Cột 2: Hỗ Trợ Khách Hàng */}
           <div className="mx-20 space-y-4 text-center md:text-left">
             <h3 className="text-base font-semibold uppercase">
               Hỗ Trợ Khách Hàng
@@ -84,17 +81,16 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Cột 3: Tỷ Giá */}
           <div className="space-y-4 text-center md:text-left">
-            <h3 className="text-base font-semibold uppercase">Tỷ Giá</h3>
+            <h3 className="text-base font-semibold uppercase">Tin tức</h3>
             <p className="leading-relaxed text-gray-400">
-              Tra cứu và cập nhật tỷ giá ngoại tệ mới nhất.
+              Cập nhật tin tức về bất động sản mới nhất.
             </p>
             <span
-              onClick={() => navigate("/exchange-rate")}
+              onClick={() => navigate("/quy-doi-ty-gia")}
               className="cursor-pointer text-blue-400 transition-all duration-200 hover:text-white"
             >
-              Quy Đổi Tỷ Giá Hiện Tại
+              Xem tin tức
             </span>
           </div>
         </div>
