@@ -1,6 +1,6 @@
-import React from "react";
+import { ArrowLeftOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-import { LeftOutlined, PlusOutlined } from "@ant-design/icons";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const CartDetail: React.FC = () => {
@@ -8,6 +8,7 @@ const CartDetail: React.FC = () => {
 
   const handleNavigateHome = () => {
     navigate("/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -16,12 +17,31 @@ const CartDetail: React.FC = () => {
       <div className="mb-6 flex items-center space-x-2 text-gray-500">
         <Button
           type="text"
-          icon={<LeftOutlined />}
+          icon={<ArrowLeftOutlined />}
           className="flex items-center text-gray-700 hover:text-black"
           onClick={handleNavigateHome}
         />
-        <span className="text-sm font-medium uppercase text-gray-400">
-          TRANG CHỦ / VĂN PHÒNG CHO THUÊ / CHỌN ĐI XEM
+        <span className="text-sm font-medium uppercase">
+          <span
+            className="cursor-pointer hover:text-black"
+            onClick={handleNavigateHome}
+          >
+            TRANG CHỦ
+          </span>
+          {" / "}
+          <span
+            className="cursor-pointer hover:text-black"
+            onClick={handleNavigateHome}
+          >
+            THUÊ TOÀ NHÀ
+          </span>
+          {" / "}
+          <span
+            className="cursor-pointer hover:text-black"
+            onClick={handleNavigateHome}
+          >
+            CHỌN ĐI XEM
+          </span>
         </span>
       </div>
 

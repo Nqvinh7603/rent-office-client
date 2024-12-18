@@ -5,6 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 const PrivacyPolicyContent: React.FC = () => {
   const navigate = useNavigate();
+  const handleNavigateHome = () => {
+    navigate("/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="container mx-auto px-4 py-10">
@@ -14,10 +18,22 @@ const PrivacyPolicyContent: React.FC = () => {
           type="text"
           icon={<ArrowLeftOutlined />}
           className="flex items-center text-gray-700 hover:text-black"
-          onClick={() => navigate("/")}
+          onClick={handleNavigateHome}
         />
         <span className="text-sm font-medium uppercase">
-          TRANG CHỦ / CHÍNH SÁCH QUYỀN RIÊNG TƯ
+          <span
+            className="cursor-pointer hover:text-black"
+            onClick={handleNavigateHome}
+          >
+            TRANG CHỦ
+          </span>
+          {" / "}
+          <span
+            className="cursor-pointer hover:text-black"
+            onClick={handleNavigateHome}
+          >
+            CHÍNH SÁCH QUYỀN RIÊNG TƯ
+          </span>
         </span>
       </div>
 

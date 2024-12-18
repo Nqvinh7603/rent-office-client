@@ -7,6 +7,10 @@ const { TextArea } = Input;
 
 const DepositForm: React.FC = () => {
   const navigate = useNavigate();
+  const handleNavigateHome = () => {
+    navigate("/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="container mx-auto px-4 py-2">
@@ -15,10 +19,22 @@ const DepositForm: React.FC = () => {
           type="text"
           icon={<ArrowLeftOutlined />}
           className="flex items-center text-gray-700 hover:text-black"
-          onClick={() => navigate("/")}
+          onClick={handleNavigateHome}
         />
         <span className="text-sm font-medium uppercase">
-          TRANG CHỦ / KÝ GỬI THÔNG TIN VĂN PHÒNG CHO THUÊ
+          <span
+            className="cursor-pointer hover:text-black"
+            onClick={handleNavigateHome}
+          >
+            TRANG CHỦ
+          </span>
+          {" / "}
+          <span
+            className="cursor-pointer hover:text-black"
+            onClick={handleNavigateHome}
+          >
+            KÝ GỬI VĂN PHÒNG
+          </span>
         </span>
       </div>
 

@@ -6,11 +6,16 @@ import {
   YoutubeFilled,
 } from "@ant-design/icons";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ContactSection from "./ContactSession";
 
 const Footer: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const customerSupport = [
     {
@@ -87,7 +92,7 @@ const Footer: React.FC = () => {
               Cập nhật tin tức về bất động sản mới nhất.
             </p>
             <span
-              onClick={() => navigate("/quy-doi-ty-gia")}
+              onClick={() => navigate("#")}
               className="cursor-pointer text-blue-400 transition-all duration-200 hover:text-white"
             >
               Xem tin tức
