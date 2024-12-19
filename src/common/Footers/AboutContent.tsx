@@ -85,8 +85,6 @@ const AboutContent: React.FC = () => {
           </p>
         </div>
       </div>
-
-      {/* Thêm Phần Khách Hàng Thuê */}
       <div className="mt-10 rounded-lg bg-white p-8 shadow-md">
         <h2 className="mb-4 text-2xl font-bold leading-tight text-gray-900">
           Những ưu điểm khách hàng thuê văn phòng tại Cyber Real

@@ -7,7 +7,7 @@ const CartButton: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCartClick = () => {
-    navigate("/chon-di-xem"); // Điều hướng đến trang giỏ hàng
+    navigate("/chon-di-xem");
   };
 
   return (
@@ -16,10 +16,7 @@ const CartButton: React.FC = () => {
         className="relative flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-[#3162ad] text-white shadow-lg transition-all duration-300 hover:bg-[#274b8d] hover:shadow-xl"
         onClick={handleCartClick}
       >
-        {/* Icon Giỏ Hàng */}
         <ShoppingCartOutlined className="text-2xl" />
-
-        {/* Badge Số Lượng */}
         <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-sm font-semibold text-white">
           {cartCount}
         </span>

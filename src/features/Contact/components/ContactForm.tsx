@@ -10,7 +10,6 @@ const ContactForm: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-10">
-      {/* Nút Quay Về Trang Chủ */}
       <div className="mb-6 flex items-center space-x-2 text-gray-500">
         <Button
           type="text"
@@ -58,8 +57,6 @@ const ContactForm: React.FC = () => {
             </a>
           </p>
         </div>
-
-        {/* Form Liên Hệ */}
         <div className="rounded-md bg-white p-6 shadow-md lg:w-3/5">
           <Form layout="vertical" className="space-y-4">
             <Form.Item

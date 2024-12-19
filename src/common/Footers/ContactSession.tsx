@@ -14,12 +14,10 @@ const ContactSection: React.FC = () => {
 
   return (
     <div className="bg-[#3162ad] py-10 text-white">
-      {/* Title */}
       <h2 className="text-center text-3xl font-bold leading-tight">
         Giúp bạn nhanh chóng tìm được <br /> văn phòng phù hợp
       </h2>
 
-      {/* Steps */}
       <div className="mt-8 grid grid-cols-1 gap-6 px-4 md:grid-cols-2 lg:mx-auto lg:max-w-5xl">
         {[
           "Liên hệ Cyber Real để được tư vấn và nhận báo giá các toà nhà phù hợp",
@@ -35,14 +33,11 @@ const ContactSection: React.FC = () => {
           </div>
         ))}
       </div>
-      {/* Hotline Button */}
       <div className="mt-8 text-center">
         <button className="rounded-md bg-red-500 px-8 py-4 text-lg font-bold shadow-md">
           Hotline: 0991.463.436
         </button>
       </div>
-
-      {/* Request Button */}
       <div className="mt-6 text-center">
         <button
           onClick={showModal}

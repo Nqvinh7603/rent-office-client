@@ -38,9 +38,7 @@ const DepositForm: React.FC = () => {
         </span>
       </div>
 
-      {/* Nội Dung Chính */}
       <div className="lg:flex lg:justify-between lg:gap-8">
-        {/* Left Section */}
         <div className="mb-6 lg:mb-0 lg:w-2/5">
           <img
             src="/src/assets/image/deposit.png"
@@ -72,7 +70,6 @@ const DepositForm: React.FC = () => {
           </ul>
         </div>
 
-        {/* Right Section - Form */}
         <div className="rounded-md bg-white p-6 shadow-md lg:w-3/5">
           <h2 className="mb-4 text-xl font-bold text-gray-800">
             Thông tin <span className="text-red-500">người ký gửi</span>
@@ -97,7 +94,6 @@ const DepositForm: React.FC = () => {
               <TextArea placeholder="Nhập địa chỉ" rows={2} />
             </Form.Item>
 
-            {/* Thông Tin Sản Phẩm Ký Gửi */}
             <h2 className="mt-6 text-xl font-bold text-gray-800">
               Thông tin <span className="text-red-500">sản phẩm ký gửi</span>
             </h2>
@@ -111,7 +107,6 @@ const DepositForm: React.FC = () => {
               <TextArea placeholder="Mô tả thêm về sản phẩm ký gửi" rows={3} />
             </Form.Item>
 
-            {/* Upload */}
             <Form.Item label="Tải hình ảnh" name="upload">
               <Upload beforeUpload={() => false} listType="text">
                 <Button icon={<UploadOutlined />}>Chọn hình ảnh</Button>

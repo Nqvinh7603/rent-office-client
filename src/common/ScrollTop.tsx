@@ -13,7 +13,7 @@ const ScrollToTop: React.FC = () => {
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll); // Cleanup sự kiện
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 

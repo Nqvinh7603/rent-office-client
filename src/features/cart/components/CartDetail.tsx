@@ -13,7 +13,6 @@ const CartDetail: React.FC = () => {
 
   return (
     <div className="mx-auto my-8 max-w-7xl px-4 lg:px-8">
-      {/* Back Button */}
       <div className="mb-6 flex items-center space-x-2 text-gray-500">
         <Button
           type="text"
@@ -45,7 +44,6 @@ const CartDetail: React.FC = () => {
         </span>
       </div>
 
-      {/* Title */}
       <div className="text-center">
         <h1 className="text-4xl font-bold text-black">
           Danh sách tòa nhà đã lưu
@@ -55,7 +53,6 @@ const CartDetail: React.FC = () => {
         </p>
       </div>
 
-      {/* Empty Cart Button */}
       <div className="mt-8 flex justify-center">
         <Button
           type="primary"

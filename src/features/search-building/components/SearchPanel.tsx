@@ -46,7 +46,6 @@ const SearchPanel: React.FC = () => {
         </Select>
       </div>
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
-        {/* Dropdown Filters */}
         <Select
           placeholder="Tất cả diện tích"
           className="w-full rounded-md border"

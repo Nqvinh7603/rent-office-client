@@ -1,7 +1,6 @@
 import { Carousel } from "antd";
 import React from "react";
 
-// Data
 const newsData = [
   {
     id: 1,
@@ -19,16 +18,12 @@ const newsData = [
   },
 ];
 
-// News Section Component
 const NewsSection: React.FC = () => {
   return (
     <div className="mx-auto my-8 w-11/12 lg:w-3/4">
-      {/* Title */}
       <h2 className="mb-6 text-2xl font-bold text-[#3162ad]">
         Tin tức <span className="text-gray-700">mới nhất</span>
       </h2>
-
-      {/* Carousel */}
       <Carousel autoplay dots={false} arrows slidesToShow={2}>
         {newsData.map((news) => (
           <div key={news.id} className="p-2">
@@ -43,7 +38,6 @@ const NewsSection: React.FC = () => {
                 />
               </div>
 
-              {/* Content */}
               <div className="flex flex-grow flex-col p-4">
                 <h3 className="mb-2 text-lg font-bold text-[#3162ad]">
                   {news.title}

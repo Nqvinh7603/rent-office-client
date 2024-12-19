@@ -18,8 +18,8 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
     demand?: string;
   }) => {
     console.log("Submitted Data:", values);
-    onClose(); // Đóng Modal sau khi submit
-    form.resetFields(); // Reset Form
+    onClose();
+    form.resetFields();
   };
 
   return (

@@ -42,7 +42,6 @@ const officeData = [
   },
 ];
 
-// OfficeList Component
 const OfficeList: React.FC = () => {
   return (
     <div className="mx-auto my-8 w-11/12 lg:w-3/4">
@@ -55,7 +54,6 @@ const OfficeList: React.FC = () => {
             key={office.id}
             className="overflow-hidden rounded-lg bg-white shadow-lg"
           >
-            {/* Office Image */}
             <div className="relative">
               <img
                 src={office.image}
@@ -67,7 +65,6 @@ const OfficeList: React.FC = () => {
               </div>
             </div>
 
-            {/* Office Details */}
             <div className="p-4">
               <h3 className="text-lg font-bold text-[#3162ad]">
                 {office.name}
@@ -86,7 +83,6 @@ const OfficeList: React.FC = () => {
               </div>
             </div>
 
-            {/* Action */}
             <div className="border-t p-4">
               <Button
                 type="link"

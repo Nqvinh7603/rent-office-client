@@ -38,7 +38,6 @@ const WhyChooseUs: React.FC = () => {
         các Co-working Space. Đa dạng diện tích cho thuê từ 30m2 - 3000m2.
       </p>
 
-      {/* Highlight Cards */}
       <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3">
         {items.map((item, index) => (
           <div

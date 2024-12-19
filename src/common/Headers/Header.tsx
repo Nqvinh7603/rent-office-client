@@ -53,13 +53,11 @@ const Header: React.FC = () => {
               </div>
             </div>
           </div>
-
-          {/* Button Navigate */}
           <Button
             type="primary"
             icon={<StarOutlined />}
             className="border-none bg-yellow-500 text-base font-semibold text-white hover:!bg-yellow-600"
-            onClick={handleNavigate} // Thêm sự kiện onClick
+            onClick={handleNavigate}
           >
             Kí gửi
           </Button>
