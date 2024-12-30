@@ -2,7 +2,6 @@ import React from "react";
 import { Button } from "antd";
 import { EnvironmentOutlined, SelectOutlined } from "@ant-design/icons";
 
-// Office Data
 const officeData = [
   {
     id: 1,
