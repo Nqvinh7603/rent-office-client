@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import RequestFormModal from "../../features/Contact/components/RequestFormModal";
+import RequestFormModal from "../../features/contact/components/RequestFormModal";
 
 const ContactSection: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -41,7 +41,7 @@ const ContactSection: React.FC = () => {
       <div className="mt-6 text-center">
         <button
           onClick={showModal}
-          className="rounded-md border-2 border-white px-8 py-4 text-lg font-semibold text-white transition hover:bg-white hover:text-[#3162ad]"
+          className="rounded-md border-2 border-solid border-white px-8 py-4 text-lg font-semibold text-white transition hover:bg-white hover:text-[#3162ad]"
         >
           Gửi yêu cầu thuê
         </button>

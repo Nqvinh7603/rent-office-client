@@ -1,5 +1,5 @@
 import React from "react";
-import DepositForm from "../features/Deposit/components/DepositForm";
+import DepositForm from "../features/deposit/components/DepositForm";
 
 const Deposit: React.FC = () => {
   return (

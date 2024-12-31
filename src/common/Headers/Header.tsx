@@ -6,8 +6,8 @@ import {
 } from "@ant-design/icons";
 import { Button } from "antd";
 import React from "react";
-import NavigationBar from "./NavigationBar";
 import { useNavigate } from "react-router-dom";
+import NavigationBar from "./NavigationBar";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -22,11 +22,7 @@ const Header: React.FC = () => {
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center">
             <a href="/">
-              <img
-                src="/src/assets/image/logo.png"
-                alt="Cyber Real"
-                className="w-35 h-10"
-              />
+              <img src="/logo.png" alt="Cyber Real" className="w-35 h-10" />
             </a>
           </div>
 

@@ -1,12 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import AboutPage from "../pages/AboutPage";
+import CartPage from "../pages/CartPage";
 import Contact from "../pages/Contact";
 import Deposit from "../pages/Deposit";
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
+import OfficeListPage from "../pages/OfficeListPage";
 import PrivacySecure from "../pages/PrivacySecure";
-import CartPage from "../pages/CartPage";
+import OfficeDetailPage from "../pages/OfficeDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -19,28 +21,42 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/ky-gui",
+        path: "ky-gui",
         element: <Deposit />,
       },
       {
-        path: "/gioi-thieu-ve-cyber-real",
+        path: "gioi-thieu-ve-cyber-real",
         element: <AboutPage />,
       },
       {
-        path: "/chinh-sach-bao-mat",
+        path: "chinh-sach-bao-mat",
         element: <PrivacySecure />,
       },
       {
-        path: "/chinh-sach-quyen-rieng-tu",
+        path: "chinh-sach-quyen-rieng-tu",
         element: <PrivacySecure />,
       },
       {
-        path: "/lien-he",
+        path: "lien-he",
         element: <Contact />,
       },
       {
-        path: "/chon-di-xem",
+        path: "chon-di-xem",
         element: <CartPage />,
+      },
+      {
+        path: "van-phong",
+        children: [
+          {
+            path: "",
+            index: true,
+            element: <OfficeListPage />,
+          },
+          {
+            path: ":id",
+            element: <OfficeDetailPage />,
+          },
+        ],
       },
     ],
   },

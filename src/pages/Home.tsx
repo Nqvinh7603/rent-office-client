@@ -2,7 +2,7 @@ import React from "react";
 import Banner from "../common/Banner";
 import WhyChooseUs from "../common/WhyChooseUs";
 import NewsSection from "../features/news/components/NewsSection";
-import OfficeList from "../features/office/compoents/OfficeList";
+import OfficeCategoryList from "../features/office/compoents/OfficeCategoryList";
 import SearchPanel from "../features/search-building/components/SearchPanel";
 
 const Home: React.FC = () => {
@@ -21,7 +21,7 @@ const Home: React.FC = () => {
             key={index}
             className={index % 2 === 0 ? "bg-gray-100 py-1" : "bg-white py-1"}
           >
-            <OfficeList />
+            <OfficeCategoryList />
           </div>
         ))}
 

@@ -1,15 +1,14 @@
 import Banner from "../common/Banner";
-import AboutContent from "../common/Footers/AboutContent";
+import OfficeList from "../features/office/compoents/OfficeList";
 import SearchPanel from "../features/search-building/components/SearchPanel";
 
-const AboutPage: React.FC = () => {
+const OfficeListPage: React.FC = () => {
   return (
     <div className="w-full">
       <Banner />
       <SearchPanel />
-      <AboutContent />
+      <OfficeList />
     </div>
   );
 };
-
-export default AboutPage;
+export default OfficeListPage;

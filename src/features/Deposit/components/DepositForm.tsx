@@ -1,7 +1,7 @@
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, Upload } from "antd";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const { TextArea } = Input;
 

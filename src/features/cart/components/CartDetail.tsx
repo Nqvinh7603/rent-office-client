@@ -11,6 +11,11 @@ const CartDetail: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleNavigateBuildings = () => {
+    navigate("/van-phong");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="mx-auto my-8 max-w-7xl px-4 lg:px-8">
       <div className="mb-6 flex items-center space-x-2 text-gray-500">
@@ -35,12 +40,7 @@ const CartDetail: React.FC = () => {
             THUÊ TOÀ NHÀ
           </span>
           {" / "}
-          <span
-            className="cursor-pointer hover:text-black"
-            onClick={handleNavigateHome}
-          >
-            CHỌN ĐI XEM
-          </span>
+          <span className="text-black">CHỌN ĐI XEM</span>
         </span>
       </div>
 
@@ -58,7 +58,7 @@ const CartDetail: React.FC = () => {
           type="primary"
           icon={<PlusOutlined />}
           className="rounded-md bg-[#3162ad] px-6 py-4 text-lg font-semibold hover:bg-[#274b8d]"
-          onClick={() => alert("Đi đến trang chọn tòa nhà")}
+          onClick={handleNavigateBuildings} // Điều hướng đến trang Tòa Nhà
         >
           Chọn tòa nhà
         </Button>
