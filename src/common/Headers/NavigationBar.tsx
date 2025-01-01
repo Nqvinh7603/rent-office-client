@@ -17,7 +17,7 @@ const NavigationBar: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
   const handleScroll = () => {
     const scrollTop = window.scrollY;
-    const stickyThreshold = 75;
+    const stickyThreshold = 72.5;
     setIsSticky(scrollTop > stickyThreshold);
   };
   useEffect(() => {
@@ -30,7 +30,7 @@ const NavigationBar: React.FC = () => {
   return (
     <div>
       <nav
-        className={`w-full bg-[var(--color-primary)] py-4 transition-all duration-300 ${
+        className={`box-shadow w-full bg-[var(--color-primary)] py-5 transition-all duration-300 ${
           isSticky
             ? "fixed top-0 z-50 translate-y-0 transform shadow-lg"
             : "relative"

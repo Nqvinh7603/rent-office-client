@@ -8,7 +8,14 @@ import {
 import { Button, Carousel, Image, Rate } from "antd";
 import { CarouselRef } from "antd/lib/carousel";
 import { useEffect, useRef, useState } from "react";
+import { FaRegStar, FaToggleOn } from "react-icons/fa";
+import { GrContact } from "react-icons/gr";
+import { IoMdPricetags } from "react-icons/io";
+import { LiaBusinessTimeSolid } from "react-icons/lia";
+import { PiMoney } from "react-icons/pi";
+import { TbLocation } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
+import NavTabs from "./NavTabs";
 
 const buildings = [
   {
@@ -191,62 +198,111 @@ const OfficeDetail: React.FC = () => {
 
           {/* Info detail */}
           <div className="lg:col-span-6">
-            <div className="mb-4">
+            <div className="mb-4 flex items-center">
+              <PiMoney
+                className="mr-3 text-xl font-bold text-red-500"
+                size={38}
+              />
               <h2 className="text-xl font-bold text-red-500">
                 Giá thuê từ: {building.rentPrice}
               </h2>
             </div>
+
             <ul className="space-y-3 text-gray-700">
-              <li>
-                <EnvironmentOutlined className="mr-2 text-lg" />
-                Vị trí: {building.details.location}
+              <li className="flex items-center">
+                <EnvironmentOutlined className="mr-3 text-lg text-[#3162ad]" />
+                <span className="font-semibold">Vị trí</span>:{" "}
+                {building.details.location}
               </li>
-              <li>
-                <DollarCircleOutlined className="mr-2 text-lg" />
-                Diện tích: {building.details.area}
+              <li className="flex items-center">
+                <DollarCircleOutlined className="mr-3 text-lg text-[#3162ad]" />
+                <span className="font-semibold">Diện tích</span>:{" "}
+                {building.details.area}
               </li>
-              <li>Hướng: {building.details.direction}</li>
-              <li>Xếp hạng: {building.details.grade}</li>
-              <li>Tình trạng: {building.details.status}</li>
-              <li>
-                <ClockCircleOutlined className="mr-2 text-lg" />
-                Giờ làm việc: {building.details.workingHours}
+              <li className="flex items-center">
+                <TbLocation className="mr-3 text-lg text-[#3162ad]" />
+                <span className="font-semibold">Hướng</span>:{" "}
+                {building.details.direction}
+              </li>
+              <li className="flex items-center">
+                <FaRegStar className="mr-3 text-lg text-[#3162ad]" />
+                <span className="font-semibold">Xếp Hạng</span>:{" "}
+                {building.details.grade}
+              </li>
+              <li className="flex items-center">
+                <FaToggleOn className="mr-3 text-lg text-[#3162ad]" />
+                <span className="font-semibold">Tình trạng</span>:{" "}
+                {building.details.status}
+              </li>
+              <li className="flex items-center">
+                <ClockCircleOutlined className="mr-3 text-lg text-[#3162ad]" />
+                <span className="font-semibold">Giờ làm việc</span>:{" "}
+                {building.details.workingHours}
               </li>
             </ul>
 
             {/* Fees */}
             <div className="mt-6">
-              <h3 className="text-lg font-bold text-gray-900">Các loại phí</h3>
-              <ul className="mt-4 grid grid-cols-1 gap-2 text-gray-700 md:grid-cols-2">
-                <li>Phí quản lý: {building.fees.management}</li>
-                <li>Phí ô tô: {building.fees.carParking}</li>
-                <li>Phí xe máy: {building.fees.bikeParking}</li>
-                <li>Tiền điện: {building.fees.electricity}</li>
-                <li>Tiền điện lạnh: {building.fees.airConditioning}</li>
-                <li>Phí ngoài giờ: {building.fees.overtime}</li>
-                <li>Tiền đặt cọc: {building.fees.deposit}</li>
-                <li>Thanh toán: {building.fees.payment}</li>
+              <h3 className="mb-3 text-xl font-bold text-gray-900">
+                Các loại phí
+              </h3>
+              <ul className="grid grid-cols-1 gap-2 space-y-3 text-gray-700 md:grid-cols-2">
+                <li className="flex items-center">
+                  <IoMdPricetags className="mr-2 text-lg text-[#3162ad]" />
+                  Phí quản lý: {building.fees.management}
+                </li>
+                <li className="flex items-center">
+                  <IoMdPricetags className="mr-2 text-lg text-[#3162ad]" /> Phí
+                  ô tô: {building.fees.carParking}
+                </li>
+                <li className="flex items-center">
+                  <IoMdPricetags className="mr-2 text-lg text-[#3162ad]" /> Phí
+                  xe máy: {building.fees.bikeParking}
+                </li>
+                <li className="flex items-center">
+                  <IoMdPricetags className="mr-2 text-lg text-[#3162ad]" /> Tiền
+                  điện: {building.fees.electricity}
+                </li>
+                <li className="flex items-center">
+                  <IoMdPricetags className="mr-2 text-lg text-[#3162ad]" /> Tiền
+                  điện lạnh: {building.fees.airConditioning}
+                </li>
+                <li className="flex items-center">
+                  <IoMdPricetags className="mr-2 text-lg text-[#3162ad]" /> Phí
+                  ngoài giờ: {building.fees.overtime}
+                </li>
+                <li className="flex items-center">
+                  <IoMdPricetags className="mr-2 text-lg text-[#3162ad]" /> Tiền
+                  đặt cọc: {building.fees.deposit}
+                </li>
+                <li className="flex items-center">
+                  <IoMdPricetags className="mr-2 text-lg text-[#3162ad]" />{" "}
+                  Thanh toán: {building.fees.payment}
+                </li>
               </ul>
             </div>
 
             {/* Action button */}
-            <div className="mt-24 flex space-x-4">
+            <div className="mt-12 flex space-x-4">
               <Button
                 type="primary"
-                className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+                className="flex items-center justify-center space-x-2 rounded-lg bg-[#3162ad] px-10 py-5 text-base font-semibold text-white hover:bg-blue-700"
               >
-                Chọn
+                <LiaBusinessTimeSolid size={28} />
+                <span>Chọn đi xem</span>
               </Button>
               <Button
                 type="default"
-                className="rounded-md border-blue-600 px-6 py-2 text-blue-600 hover:border-blue-700 hover:text-blue-700"
+                className="flex items-center justify-center space-x-2 rounded-lg border-2 border-[#3162ad] px-10 py-5 text-base font-semibold text-[#3162ad] hover:border-blue-700 hover:text-blue-700"
               >
-                Tư vấn nhanh
+                <GrContact size={28} />
+                <span>Tư vấn nhanh</span>
               </Button>
             </div>
           </div>
         </div>
       </div>
+      <NavTabs />
     </div>
   );
 };

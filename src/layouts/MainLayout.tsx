@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
+import CartButton from "../common/CartButton";
 import Footer from "../common/Footers/Footer";
 import Header from "../common/Headers/Header";
 import ScrollToTop from "../common/ScrollTop";
-import CartButton from "../common/CartButton";
 
 const MainLayout: React.FC = () => {
   return (

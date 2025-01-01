@@ -6,7 +6,7 @@ import {
   YoutubeFilled,
 } from "@ant-design/icons";
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ContactSection from "./ContactSession";
 
 const Footer: React.FC = () => {
