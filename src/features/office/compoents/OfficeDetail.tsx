@@ -6,6 +6,7 @@ import {
   EnvironmentOutlined,
 } from "@ant-design/icons";
 import { Button, Carousel, Image, Rate } from "antd";
+import { CarouselRef } from "antd/lib/carousel";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -56,9 +57,20 @@ const OfficeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [currentImage, setCurrentImage] = useState(0);
-  const carouselRef = useRef<any>(null); // Ref điều khiển carousel
-  const thumbnailContainerRef = useRef<HTMLDivElement>(null); // Ref điều khiển thumbnail container
+  const carouselRef = useRef<CarouselRef | null>(null);
+  const thumbnailContainerRef = useRef<HTMLDivElement>(null);
   const building = buildings.find((building) => building.id === id);
+
+  useEffect(() => {
+    if (thumbnailContainerRef.current) {
+      const thumbnailWidth = 72;
+      const scrollPosition = currentImage * thumbnailWidth - thumbnailWidth * 2;
+      thumbnailContainerRef.current.scrollTo({
+        left: scrollPosition,
+        behavior: "smooth",
+      });
+    }
+  }, [currentImage, setCurrentImage]);
 
   if (!building) {
     return (
@@ -70,20 +82,8 @@ const OfficeDetail: React.FC = () => {
 
   const handleThumbnailClick = (index: number) => {
     setCurrentImage(index);
-    carouselRef.current.goTo(index);
+    carouselRef.current?.goTo(index);
   };
-
-  useEffect(() => {
-    if (thumbnailContainerRef.current) {
-      const thumbnailWidth = 72; // Width of each thumbnail including margin
-      const scrollPosition = currentImage * thumbnailWidth - thumbnailWidth * 2;
-      thumbnailContainerRef.current.scrollTo({
-        left: scrollPosition,
-        behavior: "smooth",
-      });
-    }
-  }, [currentImage]);
-
   return (
     <div className="container mx-auto px-4 pb-10 pt-0">
       {/* Breadcrumb */}
@@ -136,14 +136,14 @@ const OfficeDetail: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          {/* Hình ảnh */}
+          {/* Image */}
           <div className="lg:col-span-6">
             <div className="relative">
               <Button
                 type="text"
                 icon={<ArrowLeftOutlined />}
                 className="absolute left-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow hover:bg-gray-100"
-                onClick={() => carouselRef.current.prev()}
+                onClick={() => carouselRef.current?.prev()}
               />
               <Carousel
                 ref={carouselRef}
@@ -166,7 +166,7 @@ const OfficeDetail: React.FC = () => {
                 type="text"
                 icon={<ArrowRightOutlined />}
                 className="absolute right-0 top-1/2 z-10 -translate-y-1/2 bg-white shadow hover:bg-gray-100"
-                onClick={() => carouselRef.current.next()}
+                onClick={() => carouselRef.current?.next()}
               />
             </div>
             <div
@@ -189,7 +189,7 @@ const OfficeDetail: React.FC = () => {
             </div>
           </div>
 
-          {/* Thông tin chi tiết */}
+          {/* Info detail */}
           <div className="lg:col-span-6">
             <div className="mb-4">
               <h2 className="text-xl font-bold text-red-500">
@@ -214,7 +214,7 @@ const OfficeDetail: React.FC = () => {
               </li>
             </ul>
 
-            {/* Các loại phí */}
+            {/* Fees */}
             <div className="mt-6">
               <h3 className="text-lg font-bold text-gray-900">Các loại phí</h3>
               <ul className="mt-4 grid grid-cols-1 gap-2 text-gray-700 md:grid-cols-2">
@@ -229,7 +229,7 @@ const OfficeDetail: React.FC = () => {
               </ul>
             </div>
 
-            {/* Nút hành động */}
+            {/* Action button */}
             <div className="mt-24 flex space-x-4">
               <Button
                 type="primary"
