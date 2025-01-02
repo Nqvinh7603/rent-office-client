@@ -8,6 +8,7 @@ import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { Toaster } from "react-hot-toast";
+import { ContactRefProvider } from "./context/ContactRefContext";
 import AppRouter from "./router/AppRouter";
 
 export const TIME_ZONE = "Asia/Ho_Chi_Minh";
@@ -37,7 +38,9 @@ function App() {
     >
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
-        <AppRouter />
+        <ContactRefProvider>
+          <AppRouter />
+        </ContactRefProvider>
       </QueryClientProvider>
       <Toaster
         position="top-center"

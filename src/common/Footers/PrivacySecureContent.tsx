@@ -19,14 +19,14 @@ const PrivacySecureContent: React.FC = () => {
         />
         <span className="text-sm font-medium uppercase">
           <span
-            className="cursor-pointer hover:text-black"
+            className="cursor-pointer text-black hover:text-gray-700"
             onClick={handleNavigateHome}
           >
             TRANG CHỦ
           </span>
           {" / "}
           <span
-            className="cursor-pointer hover:text-black"
+            className="cursor-pointer hover:text-gray-700"
             onClick={handleNavigateHome}
           >
             CHÍNH SÁCH BẢO MẬT

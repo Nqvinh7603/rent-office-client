@@ -7,12 +7,13 @@ import {
 } from "@ant-design/icons";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useContactRef } from "../../context/ContactRefContext";
 import ContactSection from "./ContactSession";
 
 const Footer: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const contactRef = useContactRef();
   React.useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
@@ -29,7 +30,9 @@ const Footer: React.FC = () => {
 
   return (
     <>
-      <ContactSection />
+      <div ref={contactRef}>
+        <ContactSection />
+      </div>
       <footer className="bg-black py-8 text-xs text-white">
         <div className="container mx-auto grid translate-x-5 grid-cols-1 gap-8 px-4 md:grid-cols-3 lg:grid-cols-3">
           {/* Cột 1: Thông Tin Công Ty */}

@@ -67,6 +67,7 @@ const OfficeDetail: React.FC = () => {
   const carouselRef = useRef<CarouselRef | null>(null);
   const thumbnailContainerRef = useRef<HTMLDivElement>(null);
   const building = buildings.find((building) => building.id === id);
+  const contactRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (thumbnailContainerRef.current) {
@@ -93,7 +94,6 @@ const OfficeDetail: React.FC = () => {
   };
   return (
     <div className="container mx-auto px-4 pb-10 pt-0">
-      {/* Breadcrumb */}
       <div className="mb-6 flex items-center space-x-2 text-gray-500">
         <Button
           type="text"
@@ -119,7 +119,6 @@ const OfficeDetail: React.FC = () => {
         </span>
       </div>
 
-      {/* Nội dung chính */}
       <div className="rounded-lg border bg-white p-6 shadow-lg">
         {/* Header */}
         <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between">
@@ -302,7 +301,8 @@ const OfficeDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      <NavTabs />
+      {/* <NavTabs /> */}
+      <NavTabs contactRef={contactRef} />
     </div>
   );
 };

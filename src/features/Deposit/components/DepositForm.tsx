@@ -18,12 +18,12 @@ const DepositForm: React.FC = () => {
         <Button
           type="text"
           icon={<ArrowLeftOutlined />}
-          className="flex items-center text-gray-700 hover:text-black"
+          className="flex items-center text-black hover:text-black"
           onClick={handleNavigateHome}
         />
         <span className="text-sm font-medium uppercase">
           <span
-            className="cursor-pointer hover:text-black"
+            className="cursor-pointer hover:text-gray-700"
             onClick={handleNavigateHome}
           >
             TRANG CHỦ

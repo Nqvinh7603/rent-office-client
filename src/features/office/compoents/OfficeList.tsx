@@ -26,7 +26,6 @@ const officeData = [
     direction: "Hướng Bắc",
     image: "/src/assets/image/building-2.jpg",
   },
-  // Thêm dữ liệu khác...
 ];
 
 const OfficeList: React.FC = () => {
@@ -57,12 +56,12 @@ const OfficeList: React.FC = () => {
         />
         <span className="text-sm font-medium uppercase">
           <span
-            className="cursor-pointer hover:text-black"
+            className="cursor-pointer text-black hover:text-gray-700"
             onClick={() => navigate("/")}
           >
             TRANG CHỦ
           </span>{" "}
-          / <span className="cursor-pointer hover:text-black">TOÀ NHÀ</span>
+          / <span className="cursor-pointer hover:text-gray-700">TOÀ NHÀ</span>
         </span>
       </div>
       <h1 className="mb-6 text-2xl font-bold text-gray-900">Các toà nhà</h1>
