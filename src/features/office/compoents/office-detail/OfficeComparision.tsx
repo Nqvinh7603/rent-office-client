@@ -1,8 +1,6 @@
 import { EnvironmentOutlined, SelectOutlined } from "@ant-design/icons";
 import { Button, Pagination } from "antd";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../../common/Breadcrums";
 
 const officeData = [
   {
@@ -25,29 +23,23 @@ const officeData = [
   },
 ];
 
-const OfficeList: React.FC = () => {
+const OfficeComparision: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
+
+  // Lọc dữ liệu theo trang hiện tại
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentData = officeData.slice(startIndex, endIndex);
+
+  // Xử lý thay đổi trang
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    //window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  const navigate = useNavigate();
 
   return (
     <div className="container mx-auto px-4 pb-10 pt-0">
-      <Breadcrumbs
-        items={[
-          { name: "TRANG CHỦ", path: "/" },
-          { name: "TÒA NHÀ", path: "" },
-        ]}
-        onBack={() => navigate("/")}
-      />
-      <h1 className="mb-6 text-2xl font-bold text-gray-900">Các toà nhà</h1>
-
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {currentData.map((office) => (
           <div
@@ -93,6 +85,7 @@ const OfficeList: React.FC = () => {
         ))}
       </div>
 
+      {/* Pagination */}
       <div className="mt-8 flex justify-center">
         <Pagination
           align="start"
@@ -108,4 +101,4 @@ const OfficeList: React.FC = () => {
   );
 };
 
-export default OfficeList;
+export default OfficeComparision;

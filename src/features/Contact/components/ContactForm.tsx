@@ -1,41 +1,21 @@
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import Breadcrumbs from "../../../common/Breadcrums";
 
 const { TextArea } = Input;
 
 const ContactForm: React.FC = () => {
   const navigate = useNavigate();
-  const handleNavigateHome = () => {
-    navigate("/");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
   return (
     <div className="container mx-auto px-4 py-10">
-      <div className="mb-6 flex items-center space-x-2 text-gray-500">
-        <Button
-          type="text"
-          icon={<ArrowLeftOutlined />}
-          className="flex items-center text-gray-700 hover:text-black"
-          onClick={handleNavigateHome}
-        />
-        <span className="text-sm font-medium uppercase">
-          <span
-            className="cursor-pointer hover:text-gray-700"
-            onClick={handleNavigateHome}
-          >
-            TRANG CHỦ
-          </span>
-          {" / "}
-          <span
-            className="cursor-pointer hover:text-black"
-            onClick={handleNavigateHome}
-          >
-            LIÊN HỆ
-          </span>
-        </span>
-      </div>
+      <Breadcrumbs
+        items={[
+          { name: "TRANG CHỦ", path: "/" },
+          { name: "LIÊN HỆ", path: "" },
+        ]}
+        onBack={() => navigate("/")}
+      />
 
       <div className="lg:flex lg:justify-between lg:gap-10">
         <div className="mb-6 space-y-4 text-gray-700 lg:mb-0 lg:w-2/5">

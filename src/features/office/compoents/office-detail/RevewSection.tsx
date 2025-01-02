@@ -10,7 +10,6 @@ const ReviewSection: React.FC = () => {
 
   return (
     <div>
-      {/* <h2 className="text-lg font-bold">ĐÁNH GIÁ NGƯỜI THUÊ</h2> */}
       <Form
         name="reviewForm"
         onFinish={onFinish}

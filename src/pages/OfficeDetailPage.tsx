@@ -1,5 +1,5 @@
 import Banner from "../common/Banner";
-import OfficeDetail from "../features/office/compoents/office-detail/OfficeDetail";
+import OfficeDetailOverview from "../features/office/compoents/office-detail/OfficeDetailOverview";
 import SearchPanel from "../features/search-building/components/SearchPanel";
 
 const OfficeDetailPage: React.FC = () => {
@@ -7,7 +7,7 @@ const OfficeDetailPage: React.FC = () => {
     <div className="w-full">
       <Banner />
       <SearchPanel />
-      <OfficeDetail />
+      <OfficeDetailOverview />
     </div>
   );
 };
