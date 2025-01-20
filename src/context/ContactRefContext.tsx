@@ -1,10 +1,15 @@
-import React, { createContext, useContext, useRef } from "react";
+import React, { createContext, ReactNode, useContext, useRef } from "react";
 
 type ContactRefContextType = React.RefObject<HTMLDivElement>;
 
 const ContactRefContext = createContext<ContactRefContextType | null>(null);
+ContactRefContext.displayName = "ContactRefContext";
 
-export const ContactRefProvider: React.FC<{ children: React.ReactNode }> = ({
+interface ContactRefProviderProps {
+  children: ReactNode;
+}
+
+export const ContactRefProvider: React.FC<ContactRefProviderProps> = ({
   children,
 }) => {
   const contactRef = useRef<HTMLDivElement>(null);

@@ -1,13 +1,30 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Upload } from "antd";
+import { Button, Form, Input, Select, Upload } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../../common/Breadcrums";
+import useAddressOptions from "../hooks/useAddressOptions";
 
 const { TextArea } = Input;
 
 const DepositForm: React.FC = () => {
   const navigate = useNavigate();
+  const {
+    addressOptions,
+    districtOptions,
+    wardOptions,
+    selectedRegion,
+    setSelectedRegion,
+    selectedDistrict,
+    setSelectedDistrict,
+    selectedWard,
+    setSelectedWard,
+  } = useAddressOptions();
+
+  const handleProvinceChange = (value: string) => {
+    setSelectedRegion(value);
+  };
+
   return (
     <div className="container mx-auto px-4 py-2">
       <Breadcrumbs
@@ -54,7 +71,7 @@ const DepositForm: React.FC = () => {
           <h2 className="mb-4 text-xl font-bold text-gray-800">
             Thông tin <span className="text-red-500">người ký gửi</span>
           </h2>
-          <Form layout="vertical" className="space-y-4">
+          <Form layout="vertical" className="">
             <Form.Item
               label="Họ và tên"
               name="fullName"
@@ -74,14 +91,83 @@ const DepositForm: React.FC = () => {
               <TextArea placeholder="Nhập địa chỉ" rows={2} />
             </Form.Item>
 
-            <h2 className="mt-6 text-xl font-bold text-gray-800">
+            <h2 className="mb-4 mt-6 text-xl font-bold text-gray-800">
               Thông tin <span className="text-red-500">sản phẩm ký gửi</span>
             </h2>
             <Form.Item label="Giá cho thuê" name="price">
               <Input placeholder="VD: 12 triệu/m2" />
             </Form.Item>
-            <Form.Item label="Địa chỉ cho thuê" name="rentalAddress">
-              <TextArea placeholder="Nhập địa chỉ cho thuê" rows={2} />
+            <div className="flex flex-wrap gap-4">
+              <Form.Item label="Khu vực" name="area" className="flex-1">
+                <Select
+                  allowClear
+                  showSearch
+                  value={
+                    addressOptions.find(
+                      (option) =>
+                        Number(option.value) === Number(selectedRegion),
+                    )?.label
+                  }
+                  placeholder="Chọn khu vực "
+                  optionFilterProp="label"
+                  options={addressOptions}
+                  onChange={handleProvinceChange}
+                  filterOption={(input, option) =>
+                    option?.label.toLowerCase().includes(input.toLowerCase()) ??
+                    false
+                  }
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                />
+              </Form.Item>
+              <Form.Item label="Quận/Huyện" name="district" className="flex-1">
+                <Select
+                  showSearch
+                  placeholder="Chọn quận/huyện"
+                  allowClear
+                  value={selectedDistrict}
+                  onChange={setSelectedDistrict}
+                  filterOption={(input, option) =>
+                    (option?.label
+                      ?.toString()
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) ?? -1) >= 0
+                  }
+                >
+                  {districtOptions.map((district) => (
+                    <Select.Option key={district.code} value={district.code}>
+                      {district.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Phường/Xã" name="ward" className="flex-1">
+                <Select
+                  showSearch
+                  placeholder="Chọn phường/xã"
+                  allowClear
+                  value={selectedWard}
+                  onChange={setSelectedWard}
+                  filterOption={(input, option) =>
+                    (option?.label
+                      ?.toString()
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) ?? -1) >= 0
+                  }
+                >
+                  {wardOptions.map((ward) => (
+                    <Select.Option key={ward.code} value={ward.code}>
+                      {ward.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </div>
+            <Form.Item label="Đường" name="street">
+              <Input placeholder="Nhập đường" />
             </Form.Item>
             <Form.Item label="Nội dung" name="content">
               <TextArea placeholder="Mô tả thêm về sản phẩm ký gửi" rows={3} />

@@ -1,31 +1,33 @@
 import { DownOutlined, HomeOutlined } from "@ant-design/icons";
-import { Dropdown, Menu } from "antd";
+import { Dropdown } from "antd";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useGetProvinces } from "../../hooks";
+import useStickyNavigation from "../../hooks/useStickyNavigation";
+import { IDistrict } from "../../interfaces";
+import { RootState } from "../../redux/store";
 
 const NavigationBar: React.FC = () => {
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">
-        <a href="#">Quận 1</a>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <a href="#">Quận 2</a>
-      </Menu.Item>
-    </Menu>
+  const { provinces } = useGetProvinces();
+  const isSticky = useStickyNavigation();
+  const selectedRegion = useSelector(
+    (state: RootState) => state.region.selectedRegion,
   );
+  const [districtOptions, setDistrictOptions] = useState<IDistrict[]>([]);
 
-  const [isSticky, setIsSticky] = useState(false);
-  const handleScroll = () => {
-    const scrollTop = window.scrollY;
-    const stickyThreshold = 72.5;
-    setIsSticky(scrollTop > stickyThreshold);
-  };
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+    const region = provinces?.find(
+      (item) => item.code === Number(selectedRegion),
+    );
+    setDistrictOptions(region?.districts || []);
+  }, [selectedRegion, provinces]);
+
+  const menuItems = Array.isArray(districtOptions)
+    ? districtOptions.map((district) => ({
+        key: district.code,
+        label: district.name,
+      }))
+    : [];
 
   return (
     <div>
@@ -48,7 +50,12 @@ const NavigationBar: React.FC = () => {
               </a>
             </li>
             <li>
-              <Dropdown overlay={menu}>
+              <Dropdown
+                menu={{
+                  items: menuItems,
+                  className: "grid grid-cols-3 gap-1",
+                }}
+              >
                 <a
                   href="#"
                   className="flex items-center hover:underline"
@@ -59,7 +66,7 @@ const NavigationBar: React.FC = () => {
               </Dropdown>
             </li>
             <li>
-              <Dropdown overlay={menu}>
+              <Dropdown menu={{ items: menuItems }}>
                 <a
                   href="#"
                   className="flex items-center hover:underline"
@@ -81,7 +88,7 @@ const NavigationBar: React.FC = () => {
               </Dropdown>
             </li>
             <li>
-              <Dropdown overlay={menu}>
+              <Dropdown menu={{ items: menuItems }}>
                 <a
                   href="#"
                   className="flex items-center hover:underline"
@@ -92,7 +99,7 @@ const NavigationBar: React.FC = () => {
               </Dropdown>
             </li>
             <li>
-              <Dropdown overlay={menu}>
+              <Dropdown menu={{ items: menuItems }}>
                 <a
                   href="#"
                   className="flex items-center hover:underline"

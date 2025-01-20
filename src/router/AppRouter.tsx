@@ -6,9 +6,9 @@ import Contact from "../pages/Contact";
 import Deposit from "../pages/Deposit";
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
+import OfficeDetailPage from "../pages/OfficeDetailPage";
 import OfficeListPage from "../pages/OfficeListPage";
 import PrivacySecure from "../pages/PrivacySecure";
-import OfficeDetailPage from "../pages/OfficeDetailPage";
 
 const router = createBrowserRouter([
   {

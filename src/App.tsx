@@ -6,6 +6,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
+import isoWeek from "dayjs/plugin/isoWeek";
+import quarterOfYear from "dayjs/plugin/quarterOfYear";
 import utc from "dayjs/plugin/utc";
 import { Toaster } from "react-hot-toast";
 import { ContactRefProvider } from "./context/ContactRefContext";
@@ -16,6 +18,8 @@ dayjs.locale("vi");
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
+dayjs.extend(isoWeek);
+dayjs.extend(quarterOfYear);
 dayjs.tz.setDefault(TIME_ZONE);
 
 const queryClient = new QueryClient({

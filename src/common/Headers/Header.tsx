@@ -4,17 +4,46 @@ import {
   PhoneOutlined,
   StarOutlined,
 } from "@ant-design/icons";
-import { Button } from "antd";
-import React from "react";
+import { Button, Select } from "antd";
+import React, { useEffect } from "react";
+import { IoLocationOutline } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import useGeolocation from "../../hooks/useLocation";
+import { setSelectedRegion } from "../../redux/slices/regionSlice";
+import { RootState } from "../../redux/store";
 import NavigationBar from "./NavigationBar";
+import { useGetProvinces } from "../../hooks";
 
 const Header: React.FC = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { provinces } = useGetProvinces();
+  const selectedRegion = useSelector(
+    (state: RootState) => state.region.selectedRegion,
+  );
+  const { fetchLocationUsingGeolocation } = useGeolocation(provinces);
 
   const handleNavigate = () => {
     navigate("/ky-gui");
   };
+
+  const addressOptions = Array.isArray(provinces)
+    ? provinces.map((item) => ({
+        label: item.name,
+        value: item.code,
+      }))
+    : [];
+
+  const handleProvinceChange = (value: string) => {
+    dispatch(setSelectedRegion(value));
+  };
+
+  useEffect(() => {
+    if (provinces && provinces.length > 0) {
+      fetchLocationUsingGeolocation();
+    }
+  }, [provinces]);
 
   return (
     <header className="shadow-md">
@@ -47,6 +76,32 @@ const Header: React.FC = () => {
                 <span className="block text-xs">Email tư vấn</span>
                 <h6 className="text-base font-semibold">info@cyberreal.vn</h6>
               </div>
+            </div>
+            <div className="flex items-center">
+              <IoLocationOutline size={28} className="-mr-2" />
+              <Select
+                className="text-base font-semibold"
+                showSearch
+                value={
+                  addressOptions.find(
+                    (option) => Number(option.value) === Number(selectedRegion),
+                  )?.label
+                }
+                placeholder="Chọn khu vực "
+                optionFilterProp="label"
+                options={addressOptions}
+                onChange={handleProvinceChange}
+                bordered={false}
+                filterOption={(input, option) =>
+                  option?.label.toLowerCase().includes(input.toLowerCase()) ??
+                  false
+                }
+                filterSort={(optionA, optionB) =>
+                  (optionA?.label ?? "")
+                    .toLowerCase()
+                    .localeCompare((optionB?.label ?? "").toLowerCase())
+                }
+              />
             </div>
           </div>
           <Button
