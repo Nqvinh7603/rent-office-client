@@ -1,9 +1,9 @@
+import { AudioOutlined } from "@ant-design/icons";
 import { Button, Input, Select } from "antd";
 import React, { useEffect, useState } from "react";
+import { useGetProvinces } from "../../../hooks";
 import { IDistrict, IWard } from "../../../interfaces";
 import { useAppSelector } from "../../../redux/hook";
-import { useGetProvinces } from "../../../hooks";
-
 const SearchPanel: React.FC = () => {
   const { provinces } = useGetProvinces();
   const selectedRegion = useAppSelector((state) => state.region.selectedRegion);
@@ -49,6 +49,30 @@ const SearchPanel: React.FC = () => {
         <Input
           placeholder="Nhập tên tòa nhà, ví dụ: Vincom, Vietcombank, International Plaza..."
           className="col-span-3 rounded-md border px-4 py-2 md:col-span-3 lg:col-span-3"
+          suffix={
+            <AudioOutlined
+              style={{
+                fontSize: 16,
+              }}
+              onClick={() => {
+                if (
+                  navigator.mediaDevices &&
+                  navigator.mediaDevices.getUserMedia
+                ) {
+                  navigator.mediaDevices
+                    .getUserMedia({ audio: true })
+                    .then((stream) => {
+                      console.log("Voice input activated");
+                    })
+                    .catch((err) => {
+                      console.error("Error accessing audio input: ", err);
+                    });
+                } else {
+                  console.error("getUserMedia not supported on your browser!");
+                }
+              }}
+            />
+          }
         />
         <Button type="primary" className="py-4 text-white">
           TÌM KIẾM

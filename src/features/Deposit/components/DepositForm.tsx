@@ -1,11 +1,42 @@
-import { UploadOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Select, Upload } from "antd";
-import React from "react";
+import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Row,
+  Select,
+  Upload,
+  UploadFile,
+} from "antd";
+import { UploadProps } from "antd/lib";
+import React, { useCallback, useState } from "react";
+import toast from "react-hot-toast";
+import { HiOutlineLocationMarker } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../../common/Breadcrums";
-import useAddressOptions from "../hooks/useAddressOptions";
+import Loading from "../../../common/Loading";
+import { FileType, ICustomer } from "../../../interfaces";
+import {
+  ConsignmentStatus,
+  RequireType,
+} from "../../../interfaces/common/enums";
+import { buildingTypeService } from "../../../services/building/building-type-service";
+import { customerService } from "../../../services/customer/customer-service";
+import {
+  formatCurrency,
+  getBase64,
+  parseCurrency,
+  toSnakeCase,
+} from "../../../utils";
+import { useAddressOptions, useGetCurrentAddress } from "../hooks";
 
 const { TextArea } = Input;
+
+export interface CreateCustomerFormValues extends ICustomer {
+  consignmentImg: UploadFile[];
+}
 
 const DepositForm: React.FC = () => {
   const navigate = useNavigate();
@@ -20,10 +51,81 @@ const DepositForm: React.FC = () => {
     selectedWard,
     setSelectedWard,
   } = useAddressOptions();
+  const { fetchCurrentLocation, currentAddress, setCurrentAddress, isLoading } =
+    useGetCurrentAddress();
+  const queryClient = useQueryClient();
+  const [form] = Form.useForm<CreateCustomerFormValues>();
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
+  const [previewImage, setPreviewImage] = useState<string>("");
 
-  const handleProvinceChange = (value: string) => {
-    setSelectedRegion(value);
+  const { mutate: createCustomer, isPending: isCreating } = useMutation({
+    mutationFn: customerService.createCustomerWithConsignment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey.includes("customers"),
+      });
+    },
+  });
+
+  const handlePreview = useCallback(async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as FileType);
+    }
+    setPreviewImage(file.url || file.preview || "");
+    setPreviewOpen(true);
+  }, []);
+
+  const handleUploadChange: UploadProps["onChange"] = ({ fileList }) => {
+    setFileList(fileList);
+    form.setFieldsValue({ consignmentImg: fileList });
   };
+
+  const { data: buildingTypesData, isLoading: isBuildingTypesLoading } =
+    useQuery({
+      queryKey: ["building-types"],
+      queryFn: buildingTypeService.getAllBuildingTypes,
+    });
+
+  const buildingTypeOptions = buildingTypesData?.payload?.map((type) => ({
+    label: type.buildingTypeName,
+    value: type.buildingTypeName,
+  }));
+
+  const handleFinish = (values: CreateCustomerFormValues) => {
+    const formData = new FormData();
+    const consignments = [
+      {
+        ...values.consignments[0],
+        consignmentImg: values.consignmentImg[0].name,
+        status: ConsignmentStatus.PENDING,
+      },
+    ];
+
+    const customerData: ICustomer = {
+      ...values,
+      requireType: RequireType.CONSIGNMENT,
+      consignments,
+    };
+
+    formData.append("customer", JSON.stringify(toSnakeCase(customerData)));
+    values.consignmentImg.forEach((file) => {
+      formData.append("consignmentImg", file.originFileObj as File);
+    });
+
+    createCustomer(formData, {
+      onSuccess: () => {
+        toast.success("Ký gửi tài sản thành công");
+        form.resetFields();
+        setFileList([]);
+      },
+      onError: () => {
+        toast.error("Ký gửi tài sản thất bại");
+      },
+    });
+  };
+
+  if (isBuildingTypesLoading) return <Loading />;
 
   return (
     <div className="container mx-auto px-4 py-2">
@@ -71,34 +173,125 @@ const DepositForm: React.FC = () => {
           <h2 className="mb-4 text-xl font-bold text-gray-800">
             Thông tin <span className="text-red-500">người ký gửi</span>
           </h2>
-          <Form layout="vertical" className="">
+          <Form
+            layout="vertical"
+            form={form}
+            onFinish={handleFinish}
+            initialValues={{ active: true }}
+          >
             <Form.Item
               label="Họ và tên"
-              name="fullName"
+              name="customerName"
               rules={[
                 { required: true, message: "Họ và tên không được để trống!" },
               ]}
             >
-              <Input placeholder="Nhập họ và tên" />
+              <Input placeholder="Nhập họ và tên" allowClear />
             </Form.Item>
-            <Form.Item label="Email" name="email">
-              <Input placeholder="Nhập email" />
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: "Email không được để trống!" },
+                { type: "email", message: "Email không hợp lệ!" },
+              ]}
+            >
+              <Input placeholder="Nhập email" allowClear />
             </Form.Item>
-            <Form.Item label="Điện thoại" name="phone">
-              <Input placeholder="Nhập số điện thoại" />
+            <Form.Item
+              label="Điện thoại"
+              name="phoneNumber"
+              rules={[
+                {
+                  required: true,
+                  message: "Số điện thoại không được để trống!",
+                },
+                {
+                  pattern: /^[0-9]{10}$/,
+                  message: "Số điện thoại không hợp lệ!",
+                },
+              ]}
+            >
+              <Input placeholder="Nhập số điện thoại" allowClear />
             </Form.Item>
-            <Form.Item label="Địa chỉ" name="address">
-              <TextArea placeholder="Nhập địa chỉ" rows={2} />
+            <Form.Item
+              label="Địa chỉ"
+              name="address"
+              rules={[
+                { required: true, message: "Địa chỉ không được để trống!" },
+              ]}
+            >
+              <Row gutter={8} align="middle" className="space-x-2">
+                <Input.TextArea
+                  placeholder="Nhập địa chỉ"
+                  autoSize={{ minRows: 1, maxRows: 3 }}
+                  style={{ flex: 1 }}
+                  value={currentAddress}
+                  onChange={(e) => setCurrentAddress(e.target.value)}
+                  allowClear
+                />
+
+                <Button
+                  onClick={fetchCurrentLocation}
+                  type="default"
+                  loading={isLoading}
+                  icon={<HiOutlineLocationMarker />}
+                >
+                  Vị trí hiện tại
+                </Button>
+              </Row>
             </Form.Item>
 
             <h2 className="mb-4 mt-6 text-xl font-bold text-gray-800">
               Thông tin <span className="text-red-500">sản phẩm ký gửi</span>
             </h2>
-            <Form.Item label="Giá cho thuê" name="price">
-              <Input placeholder="VD: 12 triệu/m2" />
+            <Form.Item
+              label="Loại tài sản"
+              name={["consignments", "0", "buildingType"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn loại tài sản ký gửi!",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Chọn loại tài sản"
+                options={buildingTypeOptions}
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item
+              label="Giá cho thuê"
+              name={["consignments", "0", "price"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Giá cho thuê không được để trống!",
+                },
+              ]}
+            >
+              <InputNumber
+                min={0}
+                style={{ width: "100%" }}
+                formatter={(value) => formatCurrency(value)}
+                parser={(value) => parseCurrency(value) as unknown as 0}
+                addonAfter={
+                  <span>
+                    VND/m<sup>2</sup>/tháng
+                  </span>
+                }
+              />
             </Form.Item>
             <div className="flex flex-wrap gap-4">
-              <Form.Item label="Khu vực" name="area" className="flex-1">
+              <Form.Item
+                label="Khu vực"
+                name={["consignments", "0", "city"]}
+                className="flex-1"
+                rules={[
+                  { required: true, message: "Khu vực không được để trống!" },
+                ]}
+              >
                 <Select
                   allowClear
                   showSearch
@@ -111,7 +304,7 @@ const DepositForm: React.FC = () => {
                   placeholder="Chọn khu vực "
                   optionFilterProp="label"
                   options={addressOptions}
-                  onChange={handleProvinceChange}
+                  onChange={setSelectedRegion}
                   filterOption={(input, option) =>
                     option?.label.toLowerCase().includes(input.toLowerCase()) ??
                     false
@@ -123,7 +316,17 @@ const DepositForm: React.FC = () => {
                   }
                 />
               </Form.Item>
-              <Form.Item label="Quận/Huyện" name="district" className="flex-1">
+              <Form.Item
+                label="Quận/Huyện"
+                name={["consignments", "0", "district"]}
+                className="flex-1"
+                rules={[
+                  {
+                    required: true,
+                    message: "Quận/Huyện không được để trống!",
+                  },
+                ]}
+              >
                 <Select
                   showSearch
                   placeholder="Chọn quận/huyện"
@@ -144,7 +347,14 @@ const DepositForm: React.FC = () => {
                   ))}
                 </Select>
               </Form.Item>
-              <Form.Item label="Phường/Xã" name="ward" className="flex-1">
+              <Form.Item
+                label="Phường/Xã"
+                name={["consignments", "0", "ward"]}
+                className="flex-1"
+                rules={[
+                  { required: true, message: "Phường/Xã không được để trống!" },
+                ]}
+              >
                 <Select
                   showSearch
                   placeholder="Chọn phường/xã"
@@ -166,19 +376,64 @@ const DepositForm: React.FC = () => {
                 </Select>
               </Form.Item>
             </div>
-            <Form.Item label="Đường" name="street">
+            <Form.Item
+              label="Đường"
+              name={["consignments", "0", "street"]}
+              rules={[
+                { required: true, message: "Đường không được để trống!" },
+              ]}
+            >
               <Input placeholder="Nhập đường" />
             </Form.Item>
-            <Form.Item label="Nội dung" name="content">
-              <TextArea placeholder="Mô tả thêm về sản phẩm ký gửi" rows={3} />
+            <Form.Item
+              label="Nội dung"
+              name={["consignments", "0", "description"]}
+            >
+              <TextArea
+                placeholder="Mô tả thêm về sản phẩm ký gửi"
+                rows={3}
+                allowClear
+              />
             </Form.Item>
 
-            <Form.Item label="Tải hình ảnh" name="upload">
-              <Upload beforeUpload={() => false} listType="text">
-                <Button icon={<UploadOutlined />}>Chọn hình ảnh</Button>
+            <Form.Item
+              label="Tải hình ảnh"
+              name="consignmentImg"
+              valuePropName="fileList"
+              getValueFromEvent={(e) => {
+                if (Array.isArray(e)) {
+                  return e;
+                }
+                return e && e.fileList;
+              }}
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng tải lên ít nhất một hình ảnh!",
+                },
+              ]}
+            >
+              <Upload
+                multiple
+                listType="picture-card"
+                fileList={fileList}
+                beforeUpload={() => false}
+                onPreview={handlePreview}
+                onChange={handleUploadChange}
+              >
+                {fileList.length < 10 && (
+                  <button
+                    style={{ border: 0, background: "none" }}
+                    type="button"
+                  >
+                    <PlusOutlined />
+                    <div style={{ marginTop: 8 }}>Tải ảnh lên</div>
+                  </button>
+                )}
               </Upload>
               <small className="text-gray-500">
-                Chọn cùng lúc nhiều hình ảnh để gửi (tối đa 10 ảnh).
+                Chọn tối đa 10 hình ảnh để gửi, bao gồm cả giấy tờ minh chứng
+                liên quan.
               </small>
             </Form.Item>
 
@@ -187,6 +442,7 @@ const DepositForm: React.FC = () => {
                 type="primary"
                 htmlType="submit"
                 className="w-full bg-[#3162ad] hover:bg-[#3162ad]"
+                loading={isCreating}
               >
                 Gửi đi
               </Button>

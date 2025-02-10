@@ -16,7 +16,6 @@ const useGeolocation = (provinces: any) => {
             async ({ coords: { latitude, longitude } }) => {
                 try {
                     const { address: { city: regionName } } = await locationService.getLocation(latitude, longitude);
-
                     const region = provinces?.find((item: any) =>
                         normalizeString(item.name).includes(normalizeString(regionName)),
                     );

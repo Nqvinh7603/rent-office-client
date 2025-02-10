@@ -1,5 +1,6 @@
 import React from "react";
 import DepositForm from "../features/deposit/components/DepositForm";
+import { useNavigate } from "react-router-dom";
 
 const Deposit: React.FC = () => {
   return (

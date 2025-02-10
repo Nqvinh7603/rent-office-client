@@ -13,9 +13,12 @@ export function createApiClient(
 ) {
     const axiosInstance = applyCaseMiddleware(
         axios.create({
-            baseURL: options.auth ? `${API_URL}/${resourceUrl}` : resourceUrl,
+            baseURL: `${API_URL}/${resourceUrl}`,
             withCredentials: true,
-        })
+        }),
+        {
+            ignoreParams: true,
+        }
     );
 
     if (options.auth) {

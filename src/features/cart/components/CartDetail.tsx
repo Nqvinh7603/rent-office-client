@@ -1,5 +1,5 @@
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Button, Input, Table } from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, DatePicker, Input, Table } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../../common/Breadcrums";
@@ -102,10 +102,12 @@ const CartDetail: React.FC = () => {
                 ),
               },
               {
-                title: "Ngày đi xem",
+                title: "Ngày giờ đi xem",
                 dataIndex: "viewDate",
                 key: "viewDate",
-                render: () => <Input placeholder="Chọn ngày đi xem" />,
+                render: () => (
+                  <DatePicker showTime placeholder="Chọn ngày và giờ đi xem" />
+                ),
               },
               {
                 title: "Diện tích",

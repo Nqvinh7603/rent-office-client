@@ -2,7 +2,17 @@ import { useEffect, useState } from "react";
 import { useGetProvinces } from "../../../hooks";
 import { IDistrict, IWard } from "../../../interfaces";
 
-const useAddressOptions = () => {
+export const useAddressOptions = (): {
+    addressOptions: { label: string; value: number }[];
+    districtOptions: IDistrict[];
+    wardOptions: IWard[];
+    selectedRegion: string | null;
+    setSelectedRegion: React.Dispatch<React.SetStateAction<string | null>>;
+    selectedDistrict: string | null;
+    setSelectedDistrict: React.Dispatch<React.SetStateAction<string | null>>;
+    selectedWard: string | null;
+    setSelectedWard: React.Dispatch<React.SetStateAction<string | null>>;
+} => {
     const { provinces } = useGetProvinces();
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
     const [districtOptions, setDistrictOptions] = useState<IDistrict[]>([]);
@@ -45,5 +55,3 @@ const useAddressOptions = () => {
         setSelectedWard,
     };
 };
-
-export default useAddressOptions;
