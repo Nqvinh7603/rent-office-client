@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useGetProvinces } from "../../../hooks";
-import { IDistrict, IWard } from "../../../interfaces";
 
 export const useAddressOptions = (): {
     addressOptions: { label: string; value: number }[];
-    districtOptions: IDistrict[];
-    wardOptions: IWard[];
+    districtOptions: { label: string; value: number }[];
+    wardOptions: { label: string; value: number }[];
     selectedRegion: string | null;
     setSelectedRegion: React.Dispatch<React.SetStateAction<string | null>>;
     selectedDistrict: string | null;
@@ -15,8 +14,8 @@ export const useAddressOptions = (): {
 } => {
     const { provinces } = useGetProvinces();
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-    const [districtOptions, setDistrictOptions] = useState<IDistrict[]>([]);
-    const [wardOptions, setWardOptions] = useState<IWard[]>([]);
+    const [districtOptions, setDistrictOptions] = useState<{ label: string; value: number }[]>([]);
+    const [wardOptions, setWardOptions] = useState<{ label: string; value: number }[]>([]);
     const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
     const [selectedWard, setSelectedWard] = useState<string | null>(null);
 
@@ -25,14 +24,19 @@ export const useAddressOptions = (): {
             (item) => item.code === Number(selectedRegion),
         );
         const allDistricts = region?.districts || [];
-        setDistrictOptions(allDistricts);
+        setDistrictOptions(allDistricts.map(district => ({
+            label: district.name,
+            value: district.code,
+        })));
 
         const district = allDistricts.find(
             (item) => item.code === Number(selectedDistrict),
         );
         setWardOptions(
-            district?.wards ||
-            allDistricts.flatMap((district) => district.wards || []),
+            (district?.wards || allDistricts.flatMap((district) => district.wards || [])).map(ward => ({
+                label: ward.name,
+                value: ward.code,
+            })),
         );
     }, [selectedRegion, selectedDistrict, provinces]);
 

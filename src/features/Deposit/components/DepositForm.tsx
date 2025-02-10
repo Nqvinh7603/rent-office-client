@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Form,
+  Image,
   Input,
   InputNumber,
   Row,
@@ -99,6 +100,10 @@ const DepositForm: React.FC = () => {
         ...values.consignments[0],
         consignmentImg: values.consignmentImg[0].name,
         status: ConsignmentStatus.PENDING,
+        city:
+          addressOptions.find(
+            (item) => item.value === Number(values.consignments[0].city),
+          )?.label || "",
       },
     ];
 
@@ -295,13 +300,8 @@ const DepositForm: React.FC = () => {
                 <Select
                   allowClear
                   showSearch
-                  value={
-                    addressOptions.find(
-                      (option) =>
-                        Number(option.value) === Number(selectedRegion),
-                    )?.label
-                  }
-                  placeholder="Chọn khu vực "
+                  value={selectedRegion}
+                  placeholder="Chọn khu vực"
                   optionFilterProp="label"
                   options={addressOptions}
                   onChange={setSelectedRegion}
@@ -341,8 +341,8 @@ const DepositForm: React.FC = () => {
                   }
                 >
                   {districtOptions.map((district) => (
-                    <Select.Option key={district.code} value={district.code}>
-                      {district.name}
+                    <Select.Option key={district.value} value={district.label}>
+                      {district.label}
                     </Select.Option>
                   ))}
                 </Select>
@@ -369,8 +369,8 @@ const DepositForm: React.FC = () => {
                   }
                 >
                   {wardOptions.map((ward) => (
-                    <Select.Option key={ward.code} value={ward.code}>
-                      {ward.name}
+                    <Select.Option key={ward.value} value={ward.label}>
+                      {ward.label}
                     </Select.Option>
                   ))}
                 </Select>
@@ -431,6 +431,18 @@ const DepositForm: React.FC = () => {
                   </button>
                 )}
               </Upload>
+              {previewImage && (
+                <Image
+                  wrapperStyle={{ display: "none" }}
+                  preview={{
+                    visible: previewOpen,
+                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                    afterOpenChange: (visible) =>
+                      !visible && setPreviewImage(""),
+                  }}
+                  src={previewImage}
+                />
+              )}
               <small className="text-gray-500">
                 Chọn tối đa 10 hình ảnh để gửi, bao gồm cả giấy tờ minh chứng
                 liên quan.

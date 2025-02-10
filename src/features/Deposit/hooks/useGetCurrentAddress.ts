@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { locationService } from '../../../services';
-
 export function useGetCurrentAddress() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [currentAddress, setCurrentAddress] = useState<string>("");
