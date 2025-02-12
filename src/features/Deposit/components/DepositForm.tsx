@@ -6,7 +6,6 @@ import {
   Image,
   Input,
   InputNumber,
-  Row,
   Select,
   Upload,
   UploadFile,
@@ -14,7 +13,6 @@ import {
 import { UploadProps } from "antd/lib";
 import React, { useCallback, useState } from "react";
 import toast from "react-hot-toast";
-import { HiOutlineLocationMarker } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../../common/Breadcrums";
 import Loading from "../../../common/Loading";
@@ -31,7 +29,7 @@ import {
   parseCurrency,
   toSnakeCase,
 } from "../../../utils";
-import { useAddressOptions, useGetCurrentAddress } from "../hooks";
+import { useAddressOptions } from "../hooks";
 
 const { TextArea } = Input;
 
@@ -52,8 +50,7 @@ const DepositForm: React.FC = () => {
     selectedWard,
     setSelectedWard,
   } = useAddressOptions();
-  const { fetchCurrentLocation, currentAddress, setCurrentAddress, isLoading } =
-    useGetCurrentAddress();
+
   const queryClient = useQueryClient();
   const [form] = Form.useForm<CreateCustomerFormValues>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -226,25 +223,11 @@ const DepositForm: React.FC = () => {
                 { required: true, message: "Địa chỉ không được để trống!" },
               ]}
             >
-              <Row gutter={8} align="middle" className="space-x-2">
-                <Input.TextArea
-                  placeholder="Nhập địa chỉ"
-                  autoSize={{ minRows: 1, maxRows: 3 }}
-                  style={{ flex: 1 }}
-                  value={currentAddress}
-                  onChange={(e) => setCurrentAddress(e.target.value)}
-                  allowClear
-                />
-
-                <Button
-                  onClick={fetchCurrentLocation}
-                  type="default"
-                  loading={isLoading}
-                  icon={<HiOutlineLocationMarker />}
-                >
-                  Vị trí hiện tại
-                </Button>
-              </Row>
+              <Input.TextArea
+                placeholder="Nhập địa chỉ (ví dụ: 123 Đường ABC, Phường XYZ, Quận 1, TP.HCM)"
+                autoSize={{ minRows: 1, maxRows: 3 }}
+                allowClear
+              />
             </Form.Item>
 
             <h2 className="mb-4 mt-6 text-xl font-bold text-gray-800">
