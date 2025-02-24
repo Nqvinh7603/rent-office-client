@@ -5,7 +5,7 @@ export interface ICustomerService {
     createCustomerWithConsignment(customer: FormData): Promise<ApiResponse<ICustomer>>;
 }
 
-const apiClient = createApiClient("customers");
+const apiClient = createApiClient("consignments");
 
 class CustomerService implements ICustomerService {
     async createCustomerWithConsignment(customer: FormData): Promise<ApiResponse<ICustomer>> {

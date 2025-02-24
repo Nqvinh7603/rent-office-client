@@ -11,6 +11,7 @@ import {
   UploadFile,
 } from "antd";
 import { UploadProps } from "antd/lib";
+import JoditEditor from "jodit-react";
 import React, { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +23,7 @@ import {
   RequireType,
 } from "../../../interfaces/common/enums";
 import { buildingTypeService } from "../../../services/building/building-type-service";
-import { customerService } from "../../../services/customer/customer-service";
+import { customerService } from "../../../services/consignment/consignment-service";
 import {
   formatCurrency,
   getBase64,
@@ -30,8 +31,7 @@ import {
   toSnakeCase,
 } from "../../../utils";
 import { useAddressOptions } from "../hooks";
-
-const { TextArea } = Input;
+// const { TextArea } = Input;
 
 export interface CreateCustomerFormValues extends ICustomer {
   consignmentImg: UploadFile[];
@@ -61,10 +61,11 @@ const DepositForm: React.FC = () => {
     mutationFn: customerService.createCustomerWithConsignment,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey.includes("customers"),
+        predicate: (query) => query.queryKey.includes("consignments"),
       });
     },
   });
+
 
   const handlePreview = useCallback(async (file: UploadFile) => {
     if (!file.url && !file.preview) {
@@ -368,7 +369,7 @@ const DepositForm: React.FC = () => {
             >
               <Input placeholder="Nhập đường" />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               label="Nội dung"
               name={["consignments", "0", "description"]}
             >
@@ -376,6 +377,21 @@ const DepositForm: React.FC = () => {
                 placeholder="Mô tả thêm về sản phẩm ký gửi"
                 rows={3}
                 allowClear
+              />
+              
+            </Form.Item> */}
+
+            <Form.Item
+              label="Nội dung"
+              name={["consignments", "0", "description"]}
+            >
+              <JoditEditor
+                value={form.getFieldValue(["consignments", 0, "description"])}
+                onChange={(value) => {
+                  const consignments = form.getFieldValue("consignments") || [];
+                  consignments[0] = { ...consignments[0], description: value };
+                  form.setFieldsValue({ consignments });
+                }}
               />
             </Form.Item>
 

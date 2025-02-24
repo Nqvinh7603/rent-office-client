@@ -5,9 +5,9 @@ import viVN from "antd/locale/vi_VN";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import isBetween from "dayjs/plugin/isBetween";
-import timezone from "dayjs/plugin/timezone";
 import isoWeek from "dayjs/plugin/isoWeek";
 import quarterOfYear from "dayjs/plugin/quarterOfYear";
+import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { Toaster } from "react-hot-toast";
 import { ContactRefProvider } from "./context/ContactRefContext";
@@ -29,6 +29,8 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const isDarkMode = localStorage.getItem("theme") === "dark";
 
 function App() {
   return (
