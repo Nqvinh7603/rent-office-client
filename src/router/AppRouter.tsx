@@ -9,6 +9,7 @@ import NotFound from "../pages/NotFound";
 import OfficeDetailPage from "../pages/OfficeDetailPage";
 import OfficeListPage from "../pages/OfficeListPage";
 import PrivacySecure from "../pages/PrivacySecure";
+import UpdateDeposit from "../pages/UpdateDeposit";
 
 const router = createBrowserRouter([
   {
@@ -21,8 +22,18 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "ky-gui",
-        element: <Deposit />,
+        path: "/ky-gui",
+        children: [
+          {
+            path: "",
+            index: true,
+            element: <Deposit />,
+          },
+          {
+            path: ":consignmentId",
+            element: <UpdateDeposit />,
+          },
+        ],
       },
       {
         path: "gioi-thieu-ve-cyber-real",
