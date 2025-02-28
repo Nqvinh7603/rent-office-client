@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { UploadProps } from "antd/lib";
 import JoditEditor from "jodit-react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loading from "../../../common/Loading";
@@ -54,6 +54,7 @@ const UpdateDepositForm: React.FC = () => {
   const queryClient = useQueryClient();
   const [form] = Form.useForm<CreateCustomerFormValues>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string>("");
   const [additionalInfo, setAdditionalInfo] = useState<string>("");
@@ -61,7 +62,7 @@ const UpdateDepositForm: React.FC = () => {
   useEffect(() => {
     if (!token) {
       toast.error("Token không hợp lệ");
-      navigate("/login");
+      navigate("/");
     }
   }, [token, navigate]);
 
@@ -77,7 +78,7 @@ const UpdateDepositForm: React.FC = () => {
   useEffect(() => {
     if (isTokenInvalid) {
       toast.error("Token không hợp lệ");
-      navigate("/login");
+      navigate("/");
     }
   }, [isTokenInvalid, navigate]);
 
@@ -100,6 +101,7 @@ const UpdateDepositForm: React.FC = () => {
           url: image.imgUrl,
         })),
       });
+      setPreviewImage(consignment.consignmentImages[0]?.imgUrl || "");
       setAdditionalInfo(consignment.additionalInfo || "");
       setFileList(
         consignment.consignmentImages.map((image, index) => ({
@@ -112,15 +114,18 @@ const UpdateDepositForm: React.FC = () => {
     }
   }, [consignment, form]);
 
-  const handlePreview = useCallback(async (file: UploadFile) => {
+  async function handlePreview(file: UploadFile) {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as FileType);
     }
     setPreviewImage(file.url || file.preview || "");
     setPreviewOpen(true);
-  }, []);
+  }
 
-  const handleUploadChange: UploadProps["onChange"] = ({ fileList }) => {
+  const handleUploadChange: UploadProps["onChange"] = ({ fileList, file }) => {
+    if (file.status === "removed" && file.url) {
+      setDeletedImages((prev) => [...prev, file.url!]);
+    }
     setFileList(fileList);
     form.setFieldsValue({ consignmentImg: fileList });
   };
@@ -166,6 +171,20 @@ const UpdateDepositForm: React.FC = () => {
 
       formData.append("customer", JSON.stringify(toSnakeCase(consignments)));
 
+      if (fileList.length > 0) {
+        fileList.forEach((file) => {
+          formData.append("consignmentImg", file.originFileObj as FileType);
+        });
+      } else {
+        formData.append("consignmentImg", "");
+      }
+
+      if (deletedImages.length > 0) {
+        deletedImages.forEach((image) => {
+          formData.append("deleted_images", image);
+        });
+      }
+      console.log("Danh sách ảnh bị xoá gửi lên backend:", deletedImages);
       updateCustomer(
         {
           consignmentId: consignment.consignmentId.toString(),
@@ -174,6 +193,7 @@ const UpdateDepositForm: React.FC = () => {
         {
           onSuccess: () => {
             toast.success("Cập nhật tài sản thành công");
+            navigate("/");
           },
           onError: () => {
             toast.error("Cập nhật tài sản thất bại");
@@ -197,7 +217,7 @@ const UpdateDepositForm: React.FC = () => {
         <div className="mb-6 lg:mb-0 lg:w-2/5">
           <div className="rounded-md bg-white p-6 shadow-md">
             <h2 className="mb-2 text-xl font-semibold text-gray-800">
-              Nội dung cần bổ sung
+              Nội dung <span className="text-red-500">cần bổ sung</span>
             </h2>
             <p className="text-sm leading-relaxed text-gray-700">
               <div dangerouslySetInnerHTML={{ __html: additionalInfo }} />
@@ -435,6 +455,7 @@ const UpdateDepositForm: React.FC = () => {
                 beforeUpload={() => false}
                 onPreview={handlePreview}
                 onChange={handleUploadChange}
+                showUploadList={{ showRemoveIcon: true }}
               >
                 {fileList.length < 10 && (
                   <button

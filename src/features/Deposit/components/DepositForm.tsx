@@ -31,7 +31,6 @@ import {
   toSnakeCase,
 } from "../../../utils";
 import { useAddressOptions } from "../hooks";
-// const { TextArea } = Input;
 
 export interface CreateCustomerFormValues extends ICustomer {
   consignmentImg: UploadFile[];
@@ -65,7 +64,6 @@ const DepositForm: React.FC = () => {
       });
     },
   });
-
 
   const handlePreview = useCallback(async (file: UploadFile) => {
     if (!file.url && !file.preview) {
@@ -369,17 +367,6 @@ const DepositForm: React.FC = () => {
             >
               <Input placeholder="Nhập đường" />
             </Form.Item>
-            {/* <Form.Item
-              label="Nội dung"
-              name={["consignments", "0", "description"]}
-            >
-              <TextArea
-                placeholder="Mô tả thêm về sản phẩm ký gửi"
-                rows={3}
-                allowClear
-              />
-              
-            </Form.Item> */}
 
             <Form.Item
               label="Nội dung"
