@@ -18,21 +18,30 @@ export interface IConsignmentUpdate {
     city: string;
     description: string;
     buildingType: string;
-    rejectionReason?: string;
-    additionalInfo?: string;
+    // rejectionReason?: string;
+    // additionalInfo?: string;
     price: number;
-    status: ConsignmentStatus;
+    // status: ConsignmentStatus;
     consignmentImages: IConsignmentImageUpdate[];
+    consignmentStatusHistories: IConsignmentStatusHistoryUpdate[];
     customer: ICustomerUpdate;
     createdAt: string;
     updatedAt?: string;
-    additionalInfoAt?: string;
-    rejectedReasonAt?: string;
-    confirmedAt?: string;
-    additionalInfoAfterAt?: string;
+    // additionalInfoAt?: string;
+    // rejectedReasonAt?: string;
+    // confirmedAt?: string;
+    // additionalInfoAfterAt?: string;
+
 }
 
 export interface IConsignmentImageUpdate {
     consignmentImageId: number;
     imgUrl?: string;
+}
+
+export interface IConsignmentStatusHistoryUpdate {
+    consignmentStatusHistoryId: number;
+    status: ConsignmentStatus;
+    note?: string;
+    createdAt: string;
 }

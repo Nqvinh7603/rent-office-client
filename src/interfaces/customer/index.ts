@@ -8,6 +8,7 @@ export interface ICustomer {
     address: string;
     requireType: RequireType;
     consignments: IConsignment[];
+    note?: string;
     createdAt: string;
     updatedAt?: string;
 }
@@ -19,12 +20,21 @@ export interface IConsignment {
     city: string;
     description: string;
     buildingType: string;
-    rejectionReason?: string;
     price: number;
-    status: ConsignmentStatus;
     consignmentImages: IConsignmentImage[];
+    consignmentStatusHistories: IConsignmentStatusHistory[];
     createdAt: string;
     updatedAt?: string;
+}
+
+export interface IConsignmentStatusHistory {
+    // consignmentStatusHistoryId: number;
+    status: ConsignmentStatus;
+    // note?: string;
+    // createdAt: string;
+    // createdBy: string;
+    // updatedAt?: string;
+    // updatedBy?: string;
 }
 
 export interface IConsignmentImage {

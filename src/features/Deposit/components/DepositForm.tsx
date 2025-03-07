@@ -95,11 +95,15 @@ const DepositForm: React.FC = () => {
       {
         ...values.consignments[0],
         consignmentImg: values.consignmentImg[0].name,
-        status: ConsignmentStatus.PENDING,
         city:
           addressOptions.find(
             (item) => item.value === Number(values.consignments[0].city),
           )?.label || "",
+        consignmentStatusHistories: [
+          {
+            status: ConsignmentStatus.PENDING,
+          },
+        ],
       },
     ];
 

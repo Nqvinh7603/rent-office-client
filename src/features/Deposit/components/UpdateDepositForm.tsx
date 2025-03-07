@@ -57,7 +57,7 @@ const UpdateDepositForm: React.FC = () => {
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string>("");
-  const [additionalInfo, setAdditionalInfo] = useState<string>("");
+  const [note, setNote] = useState<string>("");
 
   useEffect(() => {
     if (!token) {
@@ -102,7 +102,11 @@ const UpdateDepositForm: React.FC = () => {
         })),
       });
       setPreviewImage(consignment.consignmentImages[0]?.imgUrl || "");
-      setAdditionalInfo(consignment.additionalInfo || "");
+      setNote(
+        consignment.consignmentStatusHistories[
+          consignment.consignmentStatusHistories.length - 1
+        ]?.note || "",
+      );
       setFileList(
         consignment.consignmentImages.map((image, index) => ({
           uid: `${index}`,
@@ -166,7 +170,13 @@ const UpdateDepositForm: React.FC = () => {
       const consignments = {
         ...consignment,
         ...values,
-        status: ConsignmentStatus.ADDITIONAL_INFO,
+        // status: ConsignmentStatus.ADDITIONAL_INFO,
+        consignmentStatusHistories: [
+          ...consignment.consignmentStatusHistories,
+          {
+            status: ConsignmentStatus.ADDITIONAL_INFO,
+          },
+        ],
       };
 
       formData.append("customer", JSON.stringify(toSnakeCase(consignments)));
@@ -220,7 +230,7 @@ const UpdateDepositForm: React.FC = () => {
               Nội dung <span className="text-red-500">cần bổ sung</span>
             </h2>
             <p className="text-sm leading-relaxed text-gray-700">
-              <div dangerouslySetInnerHTML={{ __html: additionalInfo }} />
+              <div dangerouslySetInnerHTML={{ __html: note }} />
             </p>
           </div>
         </div>
