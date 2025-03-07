@@ -3,7 +3,10 @@ import { Button, Form, Input, Modal } from "antd";
 import React from "react";
 import toast from "react-hot-toast";
 import { ICustomer } from "../../../interfaces";
-import { RequireType } from "../../../interfaces/common/enums";
+import {
+  PotentialCustomer,
+  RequireType,
+} from "../../../interfaces/common/enums";
 import { customerService } from "../../../services/customer/customer-service";
 
 interface RequestFormModalProps {
@@ -31,7 +34,8 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
   function handleFinish(values: ICustomer) {
     const customerData = {
       ...values,
-      requireType: RequireType.CONSIGNMENT,
+      status: PotentialCustomer.NOT_CONTACTED,
+      requireType: RequireType.RENT,
     };
     createPotentialCustomer(customerData, {
       onSuccess: () => {

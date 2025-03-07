@@ -1,4 +1,4 @@
-import { ConsignmentStatus, RequireType } from "../common/enums";
+import { ConsignmentStatus, PotentialCustomer, RequireType } from "../common/enums";
 
 export interface ICustomer {
     customerId: number;
@@ -6,6 +6,7 @@ export interface ICustomer {
     phoneNumber: string;
     email: string;
     address: string;
+    status?: PotentialCustomer;
     requireType: RequireType;
     consignments: IConsignment[];
     note?: string;
