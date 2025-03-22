@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import { Button, Carousel, Image } from "antd";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { Button, Carousel, Image } from "antd";
 import { CarouselRef } from "antd/lib/carousel";
+import React, { useRef } from "react";
 
 interface OfficeImagesProps {
   images: string[];
@@ -32,6 +32,7 @@ const OfficeImages: React.FC<OfficeImagesProps> = ({
           onClick={() => carouselRef.current?.prev()}
         />
         <Carousel
+          autoplay
           ref={carouselRef}
           afterChange={setCurrentImage}
           dots={false}

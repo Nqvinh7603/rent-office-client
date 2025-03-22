@@ -9,11 +9,11 @@ export interface IBuildingType {
     updatedAt?: string;
 }
 
-
 export interface IBuildingLevel {
     buildingLevelId: number;
     buildingLevelCode: string;
     buildingLevelName: string;
+    buildings?: IBuilding[];
     description?: string;
     createdAt: string;
     updatedAt?: string;
@@ -108,8 +108,8 @@ export interface IBuilding {
     ward: string;
     district: string;
     city: string;
-    buildingNumber: string;
     street: string;
+    buildingNumber: string;
     description: string;
     rentalPricing: IRentalPricing[];
     orientation: Orientation;
@@ -117,7 +117,6 @@ export interface IBuilding {
     consignmentStatusHistories: IBuildingStatusHistory[];
     buildingUnits: IBuildingUnit[];
     // status: BuildingStatus;
-    buildingLevel: IBuildingLevel;
     buildingType: IBuildingType;
     fees: IFee[];
     createdAt: string;

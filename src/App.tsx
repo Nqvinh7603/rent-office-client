@@ -30,8 +30,6 @@ const queryClient = new QueryClient({
   },
 });
 
-const isDarkMode = localStorage.getItem("theme") === "dark";
-
 function App() {
   return (
     <ConfigProvider

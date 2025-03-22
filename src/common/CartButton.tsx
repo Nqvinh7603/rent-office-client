@@ -1,10 +1,13 @@
 import { ShoppingCartOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../redux/hook";
 
 const CartButton: React.FC = () => {
-  const [cartCount] = useState(0);
   const navigate = useNavigate();
+  const cartCount = useAppSelector(
+    (state) => state.appointment.buildings.length,
+  ); // Get the count of selected buildings
 
   const handleCartClick = () => {
     navigate("/chon-di-xem");

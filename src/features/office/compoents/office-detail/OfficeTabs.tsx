@@ -4,7 +4,6 @@ import { useContactRef } from "../../../../context/ContactRefContext";
 import OfficeComparision from "./OfficeComparision";
 import ReviewSection from "./RevewSection";
 import TabContent from "./TabContent";
-import TabNavigation from "./TabNavigation";
 
 // Dữ liệu động
 const dynamicData = {
@@ -19,7 +18,6 @@ const dynamicData = {
 };
 
 const OfficeTabs: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("generalInfo");
   const [isSticky, setIsSticky] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [width, setWidth] = useState<number | null>(null);
@@ -85,16 +83,6 @@ const OfficeTabs: React.FC = () => {
 
   return (
     <div className="mt-6">
-      <TabNavigation
-        tabs={tabs}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        scrollToSection={scrollToSection}
-        isSticky={isSticky}
-        isHidden={isHidden}
-        width={width}
-        tabRef={tabRef}
-      />
       <TabContent dynamicData={dynamicData} sections={sections} />
     </div>
   );

@@ -9,7 +9,7 @@ interface ApiOptions {
 
 export function createApiClient(
     resourceUrl: string,
-    options: ApiOptions = { auth: true },
+    options: ApiOptions = { auth: false },
 ) {
     const axiosInstance = applyCaseMiddleware(
         axios.create({

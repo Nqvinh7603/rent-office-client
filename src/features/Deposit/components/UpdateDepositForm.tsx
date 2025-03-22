@@ -17,9 +17,11 @@ import toast from "react-hot-toast";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loading from "../../../common/Loading";
 import { FileType } from "../../../interfaces";
+import { ORENTATION_TRANSLATIONS } from "../../../interfaces/common/constants";
 import { ConsignmentStatus } from "../../../interfaces/common/enums";
 import { IConsignmentUpdate } from "../../../interfaces/consignment";
 import { buildingTypeService } from "../../../services/building/building-type-service";
+import { feeTypeService } from "../../../services/building/fee-type-service";
 import { customerService } from "../../../services/consignment/consignment-service";
 import {
   formatCurrency,
@@ -30,7 +32,7 @@ import {
 import { useAddressOptions } from "../hooks";
 
 export interface CreateCustomerFormValues extends IConsignmentUpdate {
-  consignmentImg: UploadFile[];
+  buildingImg: UploadFile[];
 }
 
 const UpdateDepositForm: React.FC = () => {
@@ -82,9 +84,20 @@ const UpdateDepositForm: React.FC = () => {
     }
   }, [isTokenInvalid, navigate]);
 
+  const { data: feeTypesData, isLoading: isFeeTypesLoading } = useQuery({
+    queryKey: ["fee-types"],
+    queryFn: feeTypeService.getAllFeeTypes,
+  });
+
+  const feeTypeOptions =
+    feeTypesData?.payload?.map((type) => ({
+      label: type.feeTypeName,
+      value: type.feeTypeId,
+    })) || [];
+
   const { data, isLoading: isFetchingConsignment } = useQuery({
     queryFn: () => customerService.getConsignmentById(Number(consignmentId)),
-    queryKey: ["consignments", consignmentId],
+    queryKey: ["buildings", consignmentId],
     enabled: !isTokenInvalid,
   });
 
@@ -94,21 +107,21 @@ const UpdateDepositForm: React.FC = () => {
     if (consignment) {
       form.setFieldsValue({
         ...consignment,
-        consignmentImg: consignment.consignmentImages.map((image, index) => ({
+        buildingImg: consignment.buildingImages.map((image, index) => ({
           uid: `${index}`,
           name: image.imgUrl || `image-${index}`,
           status: "done",
           url: image.imgUrl,
         })),
       });
-      setPreviewImage(consignment.consignmentImages[0]?.imgUrl || "");
+      setPreviewImage(consignment.buildingImages[0]?.imgUrl || "");
       setNote(
         consignment.consignmentStatusHistories[
           consignment.consignmentStatusHistories.length - 1
         ]?.note || "",
       );
       setFileList(
-        consignment.consignmentImages.map((image, index) => ({
+        consignment.buildingImages.map((image, index) => ({
           uid: `${index}`,
           name: image.imgUrl || `image-${index}`,
           status: "done",
@@ -131,7 +144,7 @@ const UpdateDepositForm: React.FC = () => {
       setDeletedImages((prev) => [...prev, file.url!]);
     }
     setFileList(fileList);
-    form.setFieldsValue({ consignmentImg: fileList });
+    form.setFieldsValue({ buildingImg: fileList });
   };
 
   const { data: buildingTypesData, isLoading: isBuildingTypesLoading } =
@@ -158,7 +171,7 @@ const UpdateDepositForm: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         predicate: (query) => {
-          return query.queryKey.includes("consignments");
+          return query.queryKey.includes("buildings");
         },
       });
     },
@@ -170,23 +183,50 @@ const UpdateDepositForm: React.FC = () => {
       const consignments = {
         ...consignment,
         ...values,
-        // status: ConsignmentStatus.ADDITIONAL_INFO,
         consignmentStatusHistories: [
           ...consignment.consignmentStatusHistories,
           {
             status: ConsignmentStatus.ADDITIONAL_INFO,
           },
         ],
+        rentalPricing: [
+          ...consignment.rentalPricing,
+          {
+            price: values.rentalPricing[values.rentalPricing.length - 1]?.price,
+          },
+        ],
+        paymentPolicies: [
+          ...consignment.paymentPolicies,
+          {
+            paymentCycle:
+              values.paymentPolicies[values.paymentPolicies.length - 1]
+                ?.paymentCycle,
+            depositTerm:
+              values.paymentPolicies[values.paymentPolicies.length - 1]
+                ?.depositTerm,
+          },
+        ],
+        fees: values.fees.map((fee) => ({
+          ...fee,
+          feePricing: [
+            {
+              priceUnit: fee.feePricing[fee.feePricing.length - 1]?.priceUnit,
+              priceValue: fee.feePricing[fee.feePricing.length - 1]?.priceValue,
+              description:
+                fee.feePricing[fee.feePricing.length - 1]?.description,
+            },
+          ],
+        })),
       };
 
       formData.append("customer", JSON.stringify(toSnakeCase(consignments)));
 
       if (fileList.length > 0) {
         fileList.forEach((file) => {
-          formData.append("consignmentImg", file.originFileObj as FileType);
+          formData.append("buildingImg", file.originFileObj as FileType);
         });
       } else {
-        formData.append("consignmentImg", "");
+        formData.append("buildingImg", "");
       }
 
       if (deletedImages.length > 0) {
@@ -197,15 +237,17 @@ const UpdateDepositForm: React.FC = () => {
       console.log("Danh sách ảnh bị xoá gửi lên backend:", deletedImages);
       updateCustomer(
         {
-          consignmentId: consignment.consignmentId.toString(),
+          consignmentId: consignment.buildingId.toString(),
           updatedConsignment: formData,
         },
         {
-          onSuccess: () => {
+          onSuccess: (res) => {
+            console.log("Response từ API:", res);
             toast.success("Cập nhật tài sản thành công");
             navigate("/");
           },
-          onError: () => {
+          onError: (error) => {
+            console.error("Lỗi cập nhật tài sản:", error);
             toast.error("Cập nhật tài sản thất bại");
           },
         },
@@ -213,7 +255,12 @@ const UpdateDepositForm: React.FC = () => {
     }
   }
 
-  if (isVerifyingToken || isFetchingConsignment || isBuildingTypesLoading) {
+  if (
+    isVerifyingToken ||
+    isFetchingConsignment ||
+    isBuildingTypesLoading ||
+    isFeeTypesLoading
+  ) {
     return <Loading />;
   }
 
@@ -223,19 +270,17 @@ const UpdateDepositForm: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-2">
-      <div className="lg:flex lg:justify-between lg:gap-8">
-        <div className="mb-6 lg:mb-0 lg:w-2/5">
-          <div className="rounded-md bg-white p-6 shadow-md">
-            <h2 className="mb-2 text-xl font-semibold text-gray-800">
-              Nội dung <span className="text-red-500">cần bổ sung</span>
-            </h2>
-            <p className="text-sm leading-relaxed text-gray-700">
-              <div dangerouslySetInnerHTML={{ __html: note }} />
-            </p>
-          </div>
-        </div>
+      <div className="rounded-md bg-white p-6 shadow-md">
+        <h2 className="mb-2 text-xl font-semibold text-gray-800">
+          Nội dung <span className="text-red-500">cần bổ sung</span>
+        </h2>
+        <p className="text-sm leading-relaxed text-gray-700">
+          <div dangerouslySetInnerHTML={{ __html: note }} />
+        </p>
+      </div>
 
-        <div className="rounded-md bg-white p-6 shadow-md lg:w-3/5">
+      <div className="mt-5 flex justify-center">
+        <div className="w-full max-w-full rounded-md bg-white p-6 shadow-md">
           <h2 className="mb-4 text-xl font-bold text-gray-800">
             Thông tin <span className="text-red-500">người ký gửi</span>
           </h2>
@@ -245,41 +290,49 @@ const UpdateDepositForm: React.FC = () => {
             onFinish={handleFinish}
             initialValues={{ active: true }}
           >
-            <Form.Item
-              label="Họ và tên"
-              name={["customer", "customerName"]}
-              rules={[
-                { required: true, message: "Họ và tên không được để trống!" },
-              ]}
-            >
-              <Input placeholder="Nhập họ và tên" allowClear />
-            </Form.Item>
-            <Form.Item
-              label="Email"
-              name={["customer", "email"]}
-              rules={[
-                { required: true, message: "Email không được để trống!" },
-                { type: "email", message: "Email không hợp lệ!" },
-              ]}
-            >
-              <Input placeholder="Nhập email" allowClear />
-            </Form.Item>
-            <Form.Item
-              label="Điện thoại"
-              name={["customer", "phoneNumber"]}
-              rules={[
-                {
-                  required: true,
-                  message: "Số điện thoại không được để trống!",
-                },
-                {
-                  pattern: /^[0-9]{10}$/,
-                  message: "Số điện thoại không hợp lệ!",
-                },
-              ]}
-            >
-              <Input placeholder="Nhập số điện thoại" allowClear />
-            </Form.Item>
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                label="Họ và tên"
+                name={["customer", "customerName"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Họ và tên không được để trống!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập họ và tên" allowClear />
+              </Form.Item>
+              <Form.Item
+                label="Email"
+                name={["customer", "email"]}
+                rules={[
+                  { required: true, message: "Email không được để trống!" },
+                  { type: "email", message: "Email không hợp lệ!" },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập email" allowClear />
+              </Form.Item>
+              <Form.Item
+                label="Điện thoại"
+                name={["customer", "phoneNumber"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Số điện thoại không được để trống!",
+                  },
+                  {
+                    pattern: /^[0-9]{10}$/,
+                    message: "Số điện thoại không hợp lệ!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập số điện thoại" allowClear />
+              </Form.Item>
+            </div>
             <Form.Item
               label="Địa chỉ"
               name={["customer", "address"]}
@@ -297,48 +350,69 @@ const UpdateDepositForm: React.FC = () => {
             <h2 className="mb-4 mt-6 text-xl font-bold text-gray-800">
               Thông tin <span className="text-red-500">sản phẩm ký gửi</span>
             </h2>
-            <Form.Item
-              label="Loại tài sản"
-              name="buildingType"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn loại tài sản ký gửi!",
-                },
-              ]}
-            >
-              <Select
-                placeholder="Chọn loại tài sản"
-                options={buildingTypeOptions}
-                allowClear
-              />
-            </Form.Item>
-            <Form.Item
-              label="Giá cho thuê"
-              name="price"
-              rules={[
-                {
-                  required: true,
-                  message: "Giá cho thuê không được để trống!",
-                },
-              ]}
-            >
-              <InputNumber
-                min={0}
-                style={{ width: "100%" }}
-                formatter={(value) => formatCurrency(value)}
-                parser={(value) => parseCurrency(value) as unknown as 0}
-                addonAfter={
-                  <span>
-                    VND/m<sup>2</sup>/tháng
-                  </span>
-                }
-              />
-            </Form.Item>
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                label="Tên tài sản"
+                name={["buildingName"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn loại tài sản ký gửi!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập tên tài sản" allowClear />
+              </Form.Item>
+              <Form.Item
+                label="Loại tài sản"
+                name={["buildingType", "buildingTypeName"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn loại tài sản ký gửi!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <Select
+                  placeholder="Chọn loại tài sản"
+                  options={buildingTypeOptions}
+                  allowClear
+                />
+              </Form.Item>
+              <Form.Item
+                label="Giá cho thuê"
+                name={[
+                  "rentalPricing",
+                  form.getFieldValue("rentalPricing")?.length - 1,
+                  "price",
+                ]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Giá cho thuê không được để trống!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <InputNumber
+                  min={0}
+                  style={{ width: "100%" }}
+                  formatter={(value) => formatCurrency(value)}
+                  parser={(value) => parseCurrency(value) as unknown as 0}
+                  addonAfter={
+                    <span>
+                      VND/m<sup>2</sup>/tháng
+                    </span>
+                  }
+                />
+              </Form.Item>
+            </div>
             <div className="flex flex-wrap gap-4">
               <Form.Item
                 label="Khu vực"
-                name="city"
+                name={["city"]}
                 className="flex-1"
                 rules={[
                   { required: true, message: "Khu vực không được để trống!" },
@@ -365,7 +439,7 @@ const UpdateDepositForm: React.FC = () => {
               </Form.Item>
               <Form.Item
                 label="Quận/Huyện"
-                name="district"
+                name={["district"]}
                 className="flex-1"
                 rules={[
                   {
@@ -396,10 +470,13 @@ const UpdateDepositForm: React.FC = () => {
               </Form.Item>
               <Form.Item
                 label="Phường/Xã"
-                name="ward"
+                name={["ward"]}
                 className="flex-1"
                 rules={[
-                  { required: true, message: "Phường/Xã không được để trống!" },
+                  {
+                    required: true,
+                    message: "Phường/Xã không được để trống!",
+                  },
                 ]}
               >
                 <Select
@@ -423,27 +500,281 @@ const UpdateDepositForm: React.FC = () => {
                 </Select>
               </Form.Item>
             </div>
-            <Form.Item
-              label="Đường"
-              name="street"
-              rules={[
-                { required: true, message: "Đường không được để trống!" },
-              ]}
-            >
-              <Input placeholder="Nhập đường" />
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                className="flex-1"
+                label="Tên đường"
+                name={["street"]}
+                rules={[
+                  { required: true, message: "Đường không được để trống!" },
+                ]}
+              >
+                <Input placeholder="Nhập địa chỉ" />
+              </Form.Item>
+              <Form.Item
+                className="flex-2"
+                label="Số nhà"
+                name={["buildingNumber"]}
+                rules={[
+                  { required: true, message: "Số nhà không được để trống!" },
+                ]}
+              >
+                <Input placeholder="Nhập số nhà" />
+              </Form.Item>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                label="Hướng"
+                name={["orientation"]}
+                rules={[
+                  { required: true, message: "Hướng không được để trống!" },
+                ]}
+                className="flex-1"
+              >
+                <Select
+                  placeholder="Chọn hướng"
+                  allowClear
+                  showSearch
+                  options={Object.entries(ORENTATION_TRANSLATIONS).map(
+                    ([value, label]) => ({
+                      label,
+                      value,
+                    }),
+                  )}
+                  filterOption={(input, option) =>
+                    option?.label.toLowerCase().includes(input.toLowerCase()) ??
+                    false
+                  }
+                />
+              </Form.Item>
+              <Form.Item
+                label="Số tầng"
+                name={["numberOfFloors"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số tầng!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <InputNumber
+                  min={1}
+                  style={{ width: "100%" }}
+                  addonAfter="tầng"
+                />
+              </Form.Item>
+              <Form.Item
+                label="Tổng diện tích"
+                name={["totalArea"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập diện tích!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <InputNumber
+                  min={0}
+                  style={{ width: "100%" }}
+                  addonAfter="m²"
+                />
+              </Form.Item>
+            </div>
+
+            <Form.Item label="Các loại phí">
+              <div className="rounded-md border p-4">
+                <Form.List name={["fees"]}>
+                  {(fields, { add, remove }) => (
+                    <div>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <div key={key} className="mb-2 flex items-center gap-4">
+                          <Form.Item
+                            {...restField}
+                            name={[name, "feeType", "feeTypeId"]}
+                            rules={[
+                              { required: true, message: "Chọn loại phí" },
+                            ]}
+                            className="flex-1"
+                          >
+                            <Select
+                              placeholder="Chọn loại phí"
+                              options={feeTypeOptions}
+                              allowClear
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[
+                              name,
+                              "feePricing",
+                              form.getFieldValue(["fees", name, "feePricing"])
+                                ?.length - 1,
+                              "priceValue",
+                            ]}
+                            className="flex-1"
+                          >
+                            <InputNumber
+                              min={0}
+                              style={{ width: "100%" }}
+                              formatter={(value) => formatCurrency(value)}
+                              parser={(value) =>
+                                parseCurrency(value) as unknown as 0
+                              }
+                              addonAfter={
+                                <Select
+                                  placeholder="Chọn đơn vị"
+                                  options={[
+                                    {
+                                      value: "VND/m²/tháng",
+                                      label: "VND/m²/tháng",
+                                    },
+                                    {
+                                      value: "VND/xe/tháng",
+                                      label: "VND/xe/tháng",
+                                    },
+                                    {
+                                      value: "VND/tháng",
+                                      label: "VND/tháng",
+                                    },
+                                    { value: "VND/quý", label: "VND/quý" },
+                                    { value: "VND/năm", label: "VND/năm" },
+                                    { value: "VND/lần", label: "VND/lần" },
+                                  ]}
+                                  allowClear
+                                  showSearch
+                                  value={form.getFieldValue([
+                                    "fees",
+                                    name,
+                                    "feePricing",
+                                    form.getFieldValue([
+                                      "fees",
+                                      name,
+                                      "feePricing",
+                                    ])?.length - 1,
+                                    "priceUnit",
+                                  ])}
+                                  onChange={(value) => {
+                                    form.setFieldValue(
+                                      [
+                                        "fees",
+                                        name,
+                                        "feePricing",
+                                        form.getFieldValue([
+                                          "fees",
+                                          name,
+                                          "feePricing",
+                                        ])?.length - 1,
+                                        "priceUnit",
+                                      ],
+                                      value,
+                                    );
+                                  }}
+                                  filterOption={(input, option) =>
+                                    option?.label
+                                      .toLowerCase()
+                                      .includes(input.toLowerCase()) ?? false
+                                  }
+                                />
+                              }
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[
+                              name,
+                              "feePricing",
+                              form.getFieldValue(["fees", name, "feePricing"])
+                                ?.length - 1,
+                              "description",
+                            ]}
+                            className="flex-1"
+                          >
+                            <Input.TextArea
+                              placeholder="Nhập mô tả (nếu có)"
+                              autoSize={{ minRows: 1, maxRows: 3 }}
+                              allowClear
+                            />
+                          </Form.Item>
+
+                          <Button
+                            type="link"
+                            onClick={() => remove(name)}
+                            className="items-center text-red-500"
+                            icon={<PlusOutlined rotate={45} className="mb-5" />}
+                          />
+                        </div>
+                      ))}
+                      <Button
+                        type="primary"
+                        htmlType="button"
+                        className="w-full bg-[#3162ad] hover:bg-[#3162ad]"
+                        onClick={() => add()}
+                        block
+                      >
+                        + Thêm phí
+                      </Button>
+                    </div>
+                  )}
+                </Form.List>
+              </div>
             </Form.Item>
-            <Form.Item label="Nội dung" name="description">
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                label="Chu kỳ thanh toán"
+                name={[
+                  "paymentPolicies",
+                  form.getFieldValue("paymentPolicies")?.length - 1,
+                  "paymentCycle",
+                ]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập chu kỳ thanh toán!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập chu kỳ thanh toán" allowClear />
+              </Form.Item>
+              <Form.Item
+                label="Thời gian đặt cọc"
+                name={[
+                  "paymentPolicies",
+                  form.getFieldValue("paymentPolicies")?.length - 1,
+                  "depositTerm",
+                ]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập thời gian đặt cọc!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <InputNumber
+                  min={0}
+                  style={{ width: "100%" }}
+                  addonAfter="tháng"
+                />
+              </Form.Item>
+            </div>
+            <Form.Item label="Nội dung" name={["description"]}>
               <JoditEditor
-                value={form.getFieldValue("description")}
+                value={form.getFieldValue(["description"])}
                 onChange={(value) => {
-                  form.setFieldsValue({ description: value });
+                  const description = value;
+                  form.setFieldsValue({ description });
                 }}
               />
             </Form.Item>
 
             <Form.Item
               label="Tải hình ảnh"
-              name="consignmentImg"
+              name="buildingImg"
               valuePropName="fileList"
               getValueFromEvent={(e) => {
                 if (Array.isArray(e)) {
@@ -462,10 +793,9 @@ const UpdateDepositForm: React.FC = () => {
                 multiple
                 listType="picture-card"
                 fileList={fileList}
-                beforeUpload={() => false}
+                beforeUpload={() => true}
                 onPreview={handlePreview}
                 onChange={handleUploadChange}
-                showUploadList={{ showRemoveIcon: true }}
               >
                 {fileList.length < 10 && (
                   <button

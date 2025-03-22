@@ -1,28 +1,24 @@
-import { Button, Form, Input, Modal } from "antd";
+import { Button, Modal } from "antd";
 import React, { useState } from "react";
 import { GrContact } from "react-icons/gr";
 import { LiaBusinessTimeSolid } from "react-icons/lia";
+import { IBuilding } from "../../../../interfaces";
+import { useAppDispatch } from "../../../../redux/hook";
+import { addBuilding } from "../../../../redux/slices/appointmentSlice";
 
-const ActionBtn: React.FC = () => {
-  const [isConsultationModalVisible, setIsConsultationModalVisible] =
-    useState(false);
+interface ActionBtnProps {
+  building: IBuilding; // Accept the entire building object
+}
+
+const ActionBtn: React.FC<ActionBtnProps> = ({ building }) => {
   const [isScheduleModalVisible, setIsScheduleModalVisible] = useState(false);
-
-  const showConsultationModal = () => setIsConsultationModalVisible(true);
-  const closeConsultationModal = () => setIsConsultationModalVisible(false);
 
   const showScheduleModal = () => setIsScheduleModalVisible(true);
   const closeScheduleModal = () => setIsScheduleModalVisible(false);
-
-  interface FormValues {
-    name: string;
-    phone: string;
-    requirement: string;
-  }
-
-  const handleConsultationSubmit = (values: FormValues) => {
-    console.log("Form submitted:", values);
-    setIsConsultationModalVisible(false);
+  const dispatch = useAppDispatch();
+  const handleSchedule = () => {
+    dispatch(addBuilding(building));
+    showScheduleModal();
   };
 
   return (
@@ -31,7 +27,7 @@ const ActionBtn: React.FC = () => {
         <Button
           type="primary"
           className="flex items-center justify-center space-x-2 rounded-lg bg-[#3162ad] px-10 py-5 text-base font-semibold text-white hover:bg-blue-700"
-          onClick={showScheduleModal}
+          onClick={handleSchedule}
         >
           <LiaBusinessTimeSolid size={28} />
           <span>Hẹn đi xem</span>
@@ -40,55 +36,11 @@ const ActionBtn: React.FC = () => {
         <Button
           type="default"
           className="flex items-center justify-center space-x-2 rounded-lg border-2 border-[#3162ad] px-10 py-5 text-base font-semibold text-[#3162ad] hover:border-blue-700 hover:text-blue-700"
-          onClick={showConsultationModal}
         >
           <GrContact size={28} />
           <span>Tư vấn nhanh</span>
         </Button>
       </div>
-
-      <Modal
-        title="Đăng ký nhận tư vấn"
-        open={isConsultationModalVisible}
-        onCancel={closeConsultationModal}
-        footer={null}
-      >
-        <Form layout="vertical" onFinish={handleConsultationSubmit}>
-          <Form.Item
-            name="name"
-            label="Họ và tên"
-            rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
-          >
-            <Input placeholder="Họ và tên" />
-          </Form.Item>
-          <Form.Item
-            name="phone"
-            label="Số điện thoại"
-            rules={[
-              { required: true, message: "Vui lòng nhập số điện thoại" },
-              { pattern: /^[0-9]+$/, message: "Số điện thoại không hợp lệ" },
-            ]}
-          >
-            <Input placeholder="Số điện thoại" />
-          </Form.Item>
-          <Form.Item
-            name="requirement"
-            label="Nhu cầu"
-            rules={[{ required: true, message: "Vui lòng nhập nhu cầu" }]}
-          >
-            <Input.TextArea rows={4} placeholder="Nhập nhu cầu của bạn" />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="w-full bg-[#3162ad] text-white"
-            >
-              Đăng ký nhận tư vấn
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
 
       <Modal
         title={null}

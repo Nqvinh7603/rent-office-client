@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useGetProvinces } from "../../../hooks";
 import { IDistrict, IWard } from "../../../interfaces";
 import { useAppSelector } from "../../../redux/hook";
+import { ORENTATION_TRANSLATIONS } from "../../../interfaces/common/constants";
 const SearchPanel: React.FC = () => {
   const { provinces } = useGetProvinces();
   const selectedRegion = useAppSelector((state) => state.region.selectedRegion);
@@ -156,15 +157,19 @@ const SearchPanel: React.FC = () => {
         </Select>
 
         <Select
-          placeholder="Tất cả hướng"
-          className="w-full rounded-md border"
+          placeholder="Chọn hướng"
           allowClear
-          value={selectedDirection}
-          onChange={setSelectedDirection}
-        >
-          <Select.Option value="dong">Hướng Đông</Select.Option>
-          <Select.Option value="tay">Hướng Tây</Select.Option>
-        </Select>
+          showSearch
+          options={Object.entries(ORENTATION_TRANSLATIONS).map(
+            ([value, label]) => ({
+              label,
+              value,
+            }),
+          )}
+          filterOption={(input, option) =>
+            option?.label.toLowerCase().includes(input.toLowerCase()) ?? false
+          }
+        />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
-import { ConsignmentStatus, RequireType } from "../common/enums";
+import { IBuildingType } from "../building";
+import { ConsignmentStatus, Orientation, RequireType } from "../common/enums";
 
 export interface ICustomerUpdate {
     customerId: number;
@@ -12,30 +13,30 @@ export interface ICustomerUpdate {
 }
 
 export interface IConsignmentUpdate {
-    consignmentId: number;
+    buildingId: number;
+    buildingName: string;
+    numberOfFloors: number;
+    totalArea: number;
     ward: string;
     district: string;
     city: string;
+    buildingNumber: string;
+    street: string;
     description: string;
-    buildingType: string;
-    // rejectionReason?: string;
-    // additionalInfo?: string;
-    price: number;
-    // status: ConsignmentStatus;
-    consignmentImages: IConsignmentImageUpdate[];
+    orientation: Orientation;
+    rentalPricing: IRentalPricing[];
+    buildingImages: IConsignmentImageUpdate[];
     consignmentStatusHistories: IConsignmentStatusHistoryUpdate[];
-    customer: ICustomerUpdate;
+    buildingType: IBuildingType;
+    fees: IFee[];
     createdAt: string;
     updatedAt?: string;
-    // additionalInfoAt?: string;
-    // rejectedReasonAt?: string;
-    // confirmedAt?: string;
-    // additionalInfoAfterAt?: string;
-
+    paymentPolicies: IPaymentPolicy[];
+    customer: ICustomerUpdate;
 }
 
 export interface IConsignmentImageUpdate {
-    consignmentImageId: number;
+    buildingImageId: number;
     imgUrl?: string;
 }
 
@@ -44,4 +45,44 @@ export interface IConsignmentStatusHistoryUpdate {
     status: ConsignmentStatus;
     note?: string;
     createdAt: string;
+}
+
+
+export interface IRentalPricing {
+    rentalPricingId: number;
+    price: number;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IFee {
+    feeId: number;
+    feePricing: IFeePricing[];
+    feeType: IFeeType;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IFeeType {
+    feeTypeId: number;
+    feeTypeName: string;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IFeePricing {
+    feePricingId: number;
+    priceUnit?: string;
+    priceValue?: number;
+    description?: string;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IPaymentPolicy {
+    paymentPolicyId: number;
+    paymentCycle: string;
+    depositTerm: number;
+    createdAt: string;
+    updatedAt?: string;
 }

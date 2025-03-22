@@ -18,11 +18,13 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../../common/Breadcrums";
 import Loading from "../../../common/Loading";
 import { FileType, ICustomer } from "../../../interfaces";
+import { ORENTATION_TRANSLATIONS } from "../../../interfaces/common/constants";
 import {
   ConsignmentStatus,
   RequireType,
 } from "../../../interfaces/common/enums";
 import { buildingTypeService } from "../../../services/building/building-type-service";
+import { feeTypeService } from "../../../services/building/fee-type-service";
 import { customerService } from "../../../services/consignment/consignment-service";
 import {
   formatCurrency,
@@ -33,7 +35,7 @@ import {
 import { useAddressOptions } from "../hooks";
 
 export interface CreateCustomerFormValues extends ICustomer {
-  consignmentImg: UploadFile[];
+  buildingImg: UploadFile[];
 }
 
 const DepositForm: React.FC = () => {
@@ -60,7 +62,7 @@ const DepositForm: React.FC = () => {
     mutationFn: customerService.createCustomerWithConsignment,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey.includes("consignments"),
+        predicate: (query) => query.queryKey.includes("buildings"),
       });
     },
   });
@@ -75,7 +77,7 @@ const DepositForm: React.FC = () => {
 
   const handleUploadChange: UploadProps["onChange"] = ({ fileList }) => {
     setFileList(fileList);
-    form.setFieldsValue({ consignmentImg: fileList });
+    form.setFieldsValue({ buildingImg: fileList });
   };
 
   const { data: buildingTypesData, isLoading: isBuildingTypesLoading } =
@@ -84,20 +86,32 @@ const DepositForm: React.FC = () => {
       queryFn: buildingTypeService.getAllBuildingTypes,
     });
 
-  const buildingTypeOptions = buildingTypesData?.payload?.map((type) => ({
-    label: type.buildingTypeName,
-    value: type.buildingTypeName,
-  }));
+  const { data: feeTypesData, isLoading: isFeeTypesLoading } = useQuery({
+    queryKey: ["fee-types"],
+    queryFn: feeTypeService.getAllFeeTypes,
+  });
+
+  const feeTypeOptions =
+    feeTypesData?.payload?.map((type) => ({
+      label: type.feeTypeName,
+      value: type.feeTypeId,
+    })) || [];
+
+  const buildingTypeOptions =
+    buildingTypesData?.payload?.map((type) => ({
+      label: type.buildingTypeName,
+      value: type.buildingTypeId,
+    })) || [];
 
   const handleFinish = (values: CreateCustomerFormValues) => {
     const formData = new FormData();
-    const consignments = [
+    const buildings = [
       {
-        ...values.consignments[0],
-        consignmentImg: values.consignmentImg[0].name,
+        ...values.buildings[0],
+        buildingImg: values.buildingImg[0].name,
         city:
           addressOptions.find(
-            (item) => item.value === Number(values.consignments[0].city),
+            (item) => item.value === Number(values.buildings[0].city),
           )?.label || "",
         consignmentStatusHistories: [
           {
@@ -110,12 +124,12 @@ const DepositForm: React.FC = () => {
     const customerData: ICustomer = {
       ...values,
       requireType: RequireType.CONSIGNMENT,
-      consignments,
+      buildings,
     };
 
     formData.append("customer", JSON.stringify(toSnakeCase(customerData)));
-    values.consignmentImg.forEach((file) => {
-      formData.append("consignmentImg", file.originFileObj as File);
+    values.buildingImg.forEach((file) => {
+      formData.append("buildingImg", file.originFileObj as File);
     });
 
     createCustomer(formData, {
@@ -141,40 +155,39 @@ const DepositForm: React.FC = () => {
         ]}
         onBack={() => navigate("/")}
       />
+      <div className="mb-6 text-center lg:mb-0">
+        <img
+          src="/src/assets/image/deposit.png"
+          alt="House"
+          className="mx-auto mb-4 h-auto w-64 lg:w-72"
+        />
+        <p className="text-sm leading-relaxed text-gray-700">
+          Hợp tác với{" "}
+          <strong className="font-semibold text-gray-800">
+            CÔNG TY CỔ PHẦN BẤT ĐỘNG SẢN CYBER REAL
+          </strong>{" "}
+          ký gửi <strong>MIỄN PHÍ</strong> thông tin văn phòng cho thuê tại khu
+          vực TP.HCM.
+        </p>
+        <h3 className="mt-4 text-sm font-bold text-gray-800">
+          CAM KẾT CỦA CHÚNG TÔI
+        </h3>
+        <ul className="mt-2 inline-block list-disc space-y-1 pl-5 text-left text-sm text-gray-600">
+          <li>Đảm bảo những lợi ích của Quý đối tác cao nhất.</li>
+          <li>
+            Hình ảnh sản phẩm được xây dựng chuyên nghiệp và ấn tượng nhất có
+            thể.
+          </li>
+          <li>
+            Được tư vấn bởi các chuyên viên hàng đầu và am hiểu thị trường.
+          </li>
+          <li>Tiết kiệm thời gian, tối ưu hóa các quyền lợi.</li>
+          <li>Bảo mật tuyệt đối các thông tin được cung cấp.</li>
+        </ul>
+      </div>
 
-      <div className="lg:flex lg:justify-between lg:gap-8">
-        <div className="mb-6 lg:mb-0 lg:w-2/5">
-          <img
-            src="/src/assets/image/deposit.png"
-            alt="House"
-            className="mx-auto mb-4 h-auto w-64 lg:w-72"
-          />
-          <p className="text-sm leading-relaxed text-gray-700">
-            Hợp tác với{" "}
-            <strong className="font-semibold text-gray-800">
-              CÔNG TY CỔ PHẦN BẤT ĐỘNG SẢN CYBER REAL
-            </strong>{" "}
-            ký gửi <strong>MIỄN PHÍ</strong> thông tin văn phòng cho thuê tại
-            khu vực TP.HCM.
-          </p>
-          <h3 className="mt-4 text-sm font-bold text-gray-800">
-            CAM KẾT CỦA CHÚNG TÔI
-          </h3>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-600">
-            <li>Đảm bảo những lợi ích của Quý đối tác cao nhất.</li>
-            <li>
-              Hình ảnh sản phẩm được xây dựng chuyên nghiệp và ấn tượng nhất có
-              thể.
-            </li>
-            <li>
-              Được tư vấn bởi các chuyên viên hàng đầu và am hiểu thị trường.
-            </li>
-            <li>Tiết kiệm thời gian, tối ưu hóa các quyền lợi.</li>
-            <li>Bảo mật tuyệt đối các thông tin được cung cấp.</li>
-          </ul>
-        </div>
-
-        <div className="rounded-md bg-white p-6 shadow-md lg:w-3/5">
+      <div className="mt-5 flex justify-center">
+        <div className="w-full max-w-full rounded-md bg-white p-6 shadow-md">
           <h2 className="mb-4 text-xl font-bold text-gray-800">
             Thông tin <span className="text-red-500">người ký gửi</span>
           </h2>
@@ -184,41 +197,46 @@ const DepositForm: React.FC = () => {
             onFinish={handleFinish}
             initialValues={{ active: true }}
           >
-            <Form.Item
-              label="Họ và tên"
-              name="customerName"
-              rules={[
-                { required: true, message: "Họ và tên không được để trống!" },
-              ]}
-            >
-              <Input placeholder="Nhập họ và tên" allowClear />
-            </Form.Item>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                { required: true, message: "Email không được để trống!" },
-                { type: "email", message: "Email không hợp lệ!" },
-              ]}
-            >
-              <Input placeholder="Nhập email" allowClear />
-            </Form.Item>
-            <Form.Item
-              label="Điện thoại"
-              name="phoneNumber"
-              rules={[
-                {
-                  required: true,
-                  message: "Số điện thoại không được để trống!",
-                },
-                {
-                  pattern: /^[0-9]{10}$/,
-                  message: "Số điện thoại không hợp lệ!",
-                },
-              ]}
-            >
-              <Input placeholder="Nhập số điện thoại" allowClear />
-            </Form.Item>
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                label="Họ và tên"
+                name="customerName"
+                rules={[
+                  { required: true, message: "Họ và tên không được để trống!" },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập họ và tên" allowClear />
+              </Form.Item>
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                  { required: true, message: "Email không được để trống!" },
+                  { type: "email", message: "Email không hợp lệ!" },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập email" allowClear />
+              </Form.Item>
+              <Form.Item
+                label="Điện thoại"
+                name="phoneNumber"
+                rules={[
+                  {
+                    required: true,
+                    message: "Số điện thoại không được để trống!",
+                  },
+                  {
+                    pattern: /^[0-9]{10}$/,
+                    message: "Số điện thoại không hợp lệ!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập số điện thoại" allowClear />
+              </Form.Item>
+            </div>
             <Form.Item
               label="Địa chỉ"
               name="address"
@@ -236,48 +254,65 @@ const DepositForm: React.FC = () => {
             <h2 className="mb-4 mt-6 text-xl font-bold text-gray-800">
               Thông tin <span className="text-red-500">sản phẩm ký gửi</span>
             </h2>
-            <Form.Item
-              label="Loại tài sản"
-              name={["consignments", "0", "buildingType"]}
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn loại tài sản ký gửi!",
-                },
-              ]}
-            >
-              <Select
-                placeholder="Chọn loại tài sản"
-                options={buildingTypeOptions}
-                allowClear
-              />
-            </Form.Item>
-            <Form.Item
-              label="Giá cho thuê"
-              name={["consignments", "0", "price"]}
-              rules={[
-                {
-                  required: true,
-                  message: "Giá cho thuê không được để trống!",
-                },
-              ]}
-            >
-              <InputNumber
-                min={0}
-                style={{ width: "100%" }}
-                formatter={(value) => formatCurrency(value)}
-                parser={(value) => parseCurrency(value) as unknown as 0}
-                addonAfter={
-                  <span>
-                    VND/m<sup>2</sup>/tháng
-                  </span>
-                }
-              />
-            </Form.Item>
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                label="Tên tài sản"
+                name={["buildings", "0", "buildingName"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn loại tài sản ký gửi!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập tên tài sản" allowClear />
+              </Form.Item>
+              <Form.Item
+                label="Loại tài sản"
+                name={["buildings", "0", "buildingType", "buildingTypeId"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn loại tài sản ký gửi!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <Select
+                  placeholder="Chọn loại tài sản"
+                  options={buildingTypeOptions}
+                  allowClear
+                />
+              </Form.Item>
+              <Form.Item
+                label="Giá cho thuê"
+                name={["buildings", "0", "rentalPricing", 0, "price"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Giá cho thuê không được để trống!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <InputNumber
+                  min={0}
+                  style={{ width: "100%" }}
+                  formatter={(value) => formatCurrency(value)}
+                  parser={(value) => parseCurrency(value) as unknown as 0}
+                  addonAfter={
+                    <span>
+                      VND/m<sup>2</sup>/tháng
+                    </span>
+                  }
+                />
+              </Form.Item>
+            </div>
             <div className="flex flex-wrap gap-4">
               <Form.Item
                 label="Khu vực"
-                name={["consignments", "0", "city"]}
+                name={["buildings", "0", "city"]}
                 className="flex-1"
                 rules={[
                   { required: true, message: "Khu vực không được để trống!" },
@@ -304,7 +339,7 @@ const DepositForm: React.FC = () => {
               </Form.Item>
               <Form.Item
                 label="Quận/Huyện"
-                name={["consignments", "0", "district"]}
+                name={["buildings", "0", "district"]}
                 className="flex-1"
                 rules={[
                   {
@@ -335,7 +370,7 @@ const DepositForm: React.FC = () => {
               </Form.Item>
               <Form.Item
                 label="Phường/Xã"
-                name={["consignments", "0", "ward"]}
+                name={["buildings", "0", "ward"]}
                 className="flex-1"
                 rules={[
                   { required: true, message: "Phường/Xã không được để trống!" },
@@ -362,33 +397,239 @@ const DepositForm: React.FC = () => {
                 </Select>
               </Form.Item>
             </div>
-            <Form.Item
-              label="Đường"
-              name={["consignments", "0", "street"]}
-              rules={[
-                { required: true, message: "Đường không được để trống!" },
-              ]}
-            >
-              <Input placeholder="Nhập đường" />
-            </Form.Item>
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                className="flex-1"
+                label="Tên đường"
+                name={["buildings", "0", "street"]}
+                rules={[
+                  { required: true, message: "Đường không được để trống!" },
+                ]}
+              >
+                <Input placeholder="Nhập địa chỉ" />
+              </Form.Item>
+              <Form.Item
+                className="flex-2"
+                label="Số nhà"
+                name={["buildings", "0", "buildingNumber"]}
+                rules={[
+                  { required: true, message: "Số nhà không được để trống!" },
+                ]}
+              >
+                <Input placeholder="Nhập số nhà" />
+              </Form.Item>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                label="Hướng"
+                name={["buildings", "0", "orientation"]}
+                rules={[
+                  { required: true, message: "Hướng không được để trống!" },
+                ]}
+                className="flex-1"
+              >
+                <Select
+                  placeholder="Chọn hướng"
+                  allowClear
+                  showSearch
+                  options={Object.entries(ORENTATION_TRANSLATIONS).map(
+                    ([value, label]) => ({
+                      label,
+                      value,
+                    }),
+                  )}
+                  filterOption={(input, option) =>
+                    option?.label.toLowerCase().includes(input.toLowerCase()) ??
+                    false
+                  }
+                />
+              </Form.Item>
+              <Form.Item
+                label="Số tầng"
+                name={["buildings", "0", "numberOfFloors"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số tầng!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <InputNumber
+                  min={1}
+                  style={{ width: "100%" }}
+                  addonAfter="tầng"
+                />
+              </Form.Item>
+              <Form.Item
+                label="Tổng diện tích"
+                name={["buildings", "0", "totalArea"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập diện tích!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <InputNumber
+                  min={0}
+                  style={{ width: "100%" }}
+                  addonAfter="m²"
+                />
+              </Form.Item>
+            </div>
 
+            <Form.Item label="Các loại phí">
+              <div className="rounded-md border p-4">
+                <Form.List name={["buildings", "0", "fees"]}>
+                  {(fields, { add, remove }) => (
+                    <div>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <div key={key} className="mb-2 flex items-center gap-4">
+                          <Form.Item
+                            {...restField}
+                            name={[name, "feeType", "feeTypeId"]}
+                            rules={[
+                              { required: true, message: "Chọn loại phí" },
+                            ]}
+                            className="flex-1"
+                          >
+                            <Select
+                              placeholder="Chọn loại phí"
+                              options={feeTypeOptions}
+                              allowClear
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[name, "feePricing", 0, "priceValue"]}
+                            className="flex-1"
+                          >
+                            <InputNumber
+                              min={0}
+                              style={{ width: "100%" }}
+                              formatter={(value) => formatCurrency(value)}
+                              parser={(value) =>
+                                parseCurrency(value) as unknown as 0
+                              }
+                              addonAfter={
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "feePricing", 0, "priceUnit"]}
+                                  noStyle
+                                >
+                                  <Select
+                                    placeholder="Chọn đơn vị"
+                                    options={[
+                                      {
+                                        value: "VND/m²/tháng",
+                                        label: "VND/m²/tháng",
+                                      }, // Phí quản lý
+
+                                      {
+                                        value: "VND/xe/tháng",
+                                        label: "VND/xe/tháng",
+                                      }, // Phí đỗ xe
+
+                                      {
+                                        value: "VND/tháng",
+                                        label: "VND/tháng",
+                                      }, // Các phí cố định
+                                      { value: "VND/quý", label: "VND/quý" },
+                                      { value: "VND/năm", label: "VND/năm" },
+                                      { value: "VND/lần", label: "VND/lần" }, // Phí vệ sinh, bảo trì
+                                    ]}
+                                  />
+                                </Form.Item>
+                              }
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[name, "feePricing", 0, "description"]}
+                            className="flex-1"
+                          >
+                            <Input.TextArea
+                              placeholder="Nhập mô tả (nếu có)"
+                              autoSize={{ minRows: 1, maxRows: 3 }}
+                              allowClear
+                            />
+                          </Form.Item>
+
+                          <Button
+                            type="link"
+                            onClick={() => remove(name)}
+                            className="items-center text-red-500"
+                            icon={<PlusOutlined rotate={45} className="mb-5" />}
+                          />
+                        </div>
+                      ))}
+                      <Button
+                        type="primary"
+                        htmlType="button"
+                        className="w-full bg-[#3162ad] hover:bg-[#3162ad]"
+                        onClick={() => add()}
+                        block
+                      >
+                        + Thêm phí
+                      </Button>
+                    </div>
+                  )}
+                </Form.List>
+              </div>
+            </Form.Item>
+            <div className="flex flex-wrap gap-4">
+              <Form.Item
+                label="Chu kỳ thanh toán"
+                name={["buildings", "0", "paymentPolicies", 0, "paymentCycle"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập chu kỳ thanh toán!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <Input placeholder="Nhập chu kỳ thanh toán" allowClear />
+              </Form.Item>
+              <Form.Item
+                label="Thời gian đặt cọc"
+                name={["buildings", "0", "paymentPolicies", 0, "depositTerm"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập thời gian đặt cọc!",
+                  },
+                ]}
+                className="flex-1"
+              >
+                <InputNumber
+                  min={0}
+                  style={{ width: "100%" }}
+                  addonAfter="tháng"
+                />
+              </Form.Item>
+            </div>
             <Form.Item
               label="Nội dung"
-              name={["consignments", "0", "description"]}
+              name={["buildings", "0", "description"]}
             >
               <JoditEditor
-                value={form.getFieldValue(["consignments", 0, "description"])}
+                value={form.getFieldValue(["buildings", 0, "description"])}
                 onChange={(value) => {
-                  const consignments = form.getFieldValue("consignments") || [];
-                  consignments[0] = { ...consignments[0], description: value };
-                  form.setFieldsValue({ consignments });
+                  const buildings = form.getFieldValue("buildings") || [];
+                  buildings[0] = { ...buildings[0], description: value };
+                  form.setFieldsValue({ buildings });
                 }}
               />
             </Form.Item>
 
             <Form.Item
               label="Tải hình ảnh"
-              name="consignmentImg"
+              name="buildingImg"
               valuePropName="fileList"
               getValueFromEvent={(e) => {
                 if (Array.isArray(e)) {

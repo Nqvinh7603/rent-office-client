@@ -21,3 +21,22 @@ export enum PotentialCustomer {
     CANCELED = "CANCELED", // đã hủy
 }
 
+export enum Orientation {
+    EAST = "EAST", // Đông
+    WEST = "WEST", // Tây
+    SOUTH = "SOUTH", // Nam
+    NORTH = "NORTH", // Bắc
+    SOUTHEAST = "SOUTHEAST", // Đông Nam
+    NORTHEAST = "NORTHEAST", // Đông Bắc
+    SOUTHWEST = "SOUTHWEST", // Tây Nam
+    NORTHWEST = "NORTHWEST", // Tây Bắc
+    UNDETERMINED = "UNDETERMINED", // Chưa xác định
+}
+
+
+export enum AppointmentStatus {
+    PENDING = "PENDING",
+    CONFIRMED = "CONFIRMED",
+    COMPLETED = "COMPLETED",
+    CANCELLED = "CANCELLED",
+}

@@ -17,7 +17,7 @@ const OfficeHeader: React.FC<OfficeHeaderProps> = ({
   return (
     <div className="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">{name}</h1>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">{name}</h1>
         <p className="text-gray-500">{address}</p>
       </div>
       <div className="mt-4 flex items-center lg:mt-0">

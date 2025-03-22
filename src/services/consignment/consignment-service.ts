@@ -9,7 +9,7 @@ export interface ICustomerService {
     verifyToken(consignmentId: string, token: string): Promise<ApiResponse<void>>;
 }
 
-const apiClient = createApiClient("consignments");
+const apiClient = createApiClient("buildings");
 
 class CustomerService implements ICustomerService {
     async getConsignmentById(consignmentId: number): Promise<ApiResponse<IConsignmentUpdate>> {
@@ -23,7 +23,7 @@ class CustomerService implements ICustomerService {
     }
 
     async createCustomerWithConsignment(customer: FormData): Promise<ApiResponse<ICustomer>> {
-        return (await apiClient.post<ApiResponse<ICustomer>>("", customer)).data;
+        return (await apiClient.post<ApiResponse<ICustomer>>("/create-building-with-customer", customer)).data;
     }
     async verifyToken(consignmentId: string, token: string): Promise<ApiResponse<void>> {
         return (

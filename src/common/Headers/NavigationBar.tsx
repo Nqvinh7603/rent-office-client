@@ -1,11 +1,13 @@
 import { DownOutlined, HomeOutlined } from "@ant-design/icons";
-import { Dropdown } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import { Dropdown, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetProvinces } from "../../hooks";
 import useStickyNavigation from "../../hooks/useStickyNavigation";
 import { IDistrict } from "../../interfaces";
 import { RootState } from "../../redux/store";
+import { buildingLevelService } from "../../services/building/building-level-service";
 
 const NavigationBar: React.FC = () => {
   const { provinces } = useGetProvinces();
@@ -15,12 +17,19 @@ const NavigationBar: React.FC = () => {
   );
   const [districtOptions, setDistrictOptions] = useState<IDistrict[]>([]);
 
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["building-levels"],
+    queryFn: () => buildingLevelService.getAllBuildingLevels(),
+  });
+
   useEffect(() => {
     const region = provinces?.find(
       (item) => item.code === Number(selectedRegion),
     );
     setDistrictOptions(region?.districts || []);
   }, [selectedRegion, provinces]);
+
+  const buildingLevels = data?.payload || [];
 
   const menuItems = Array.isArray(districtOptions)
     ? districtOptions.map((district) => ({
@@ -49,70 +58,38 @@ const NavigationBar: React.FC = () => {
                 <HomeOutlined className="mr-1" /> Trang chủ
               </a>
             </li>
-            <li>
-              <Dropdown
-                menu={{
-                  items: menuItems,
-                  className: "grid grid-cols-3 gap-1",
-                }}
-              >
-                <a
-                  href="#"
-                  className="flex items-center hover:underline"
-                  style={{ fontSize: "14px" }}
-                >
-                  Văn Phòng Theo Quận <DownOutlined className="ml-1" />
-                </a>
-              </Dropdown>
-            </li>
-            <li>
-              <Dropdown menu={{ items: menuItems }}>
-                <a
-                  href="#"
-                  className="flex items-center hover:underline"
-                  style={{ fontSize: "14px" }}
-                >
-                  Văn Phòng Trọn Gói <DownOutlined className="ml-1" />
-                </a>
-              </Dropdown>
-            </li>
-            <li>
-              <Dropdown>
-                <a
-                  href="#"
-                  className="flex items-center hover:underline"
-                  style={{ fontSize: "14px" }}
-                >
-                  Văn Phòng Hạng A <DownOutlined className="ml-1" />
-                </a>
-              </Dropdown>
-            </li>
-            <li>
-              <Dropdown menu={{ items: menuItems }}>
-                <a
-                  href="#"
-                  className="flex items-center hover:underline"
-                  style={{ fontSize: "14px" }}
-                >
-                  Văn Phòng Giá Rẻ <DownOutlined className="ml-1" />
-                </a>
-              </Dropdown>
-            </li>
-            <li>
-              <Dropdown menu={{ items: menuItems }}>
-                <a
-                  href="#"
-                  className="flex items-center hover:underline"
-                  style={{ fontSize: "14px" }}
-                >
-                  Thuê Toà Nhà <DownOutlined className="ml-1" />
-                </a>
-              </Dropdown>
-            </li>
+
+            {isLoading ? (
+              <li>
+                <Spin size="small" />
+              </li>
+            ) : isError ? (
+              <li className="text-red-500">Lỗi tải dữ liệu</li>
+            ) : (
+              buildingLevels
+                .sort((a, b) =>
+                  a.buildingLevelName.localeCompare(b.buildingLevelName),
+                )
+                .map((level) => (
+                  <li key={level.buildingLevelId} className="group relative">
+                    <Dropdown menu={{ items: menuItems }}>
+                      <a
+                        href={`#building-level-${level.buildingLevelId}`}
+                        className="flex items-center hover:underline"
+                        style={{ fontSize: "14px" }}
+                      >
+                        Văn phòng {level.buildingLevelName}{" "}
+                        <DownOutlined className="ml-1" />
+                      </a>
+                    </Dropdown>
+                  </li>
+                ))
+            )}
           </ul>
         </div>
       </nav>
     </div>
   );
 };
+
 export default NavigationBar;

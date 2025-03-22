@@ -43,7 +43,8 @@ export function formatCurrency(value: number | undefined): string {
     return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export function parseCurrency(value: string | undefined): number {
-    return (value?.replace(/\$\s?|(,*)/g, "") as unknown as number) || 0;
+export function parseCurrency(value: string | undefined): number | undefined {
+    const parsedValue = value?.replace(/\$\s?|(,*)/g, "");
+    return parsedValue ? parseFloat(parsedValue) : undefined;
 }
 
