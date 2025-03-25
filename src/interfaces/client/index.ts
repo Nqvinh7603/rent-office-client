@@ -42,6 +42,7 @@ export interface IBuildingUnit {
     unitName?: string;
     floor: number;
     rentAreas: IRentArea[];
+    rentalPricing: IRentalPricing[];
     createdAt: string;
     updatedAt?: string;
 }
@@ -111,7 +112,7 @@ export interface IBuilding {
     street: string;
     buildingNumber: string;
     description: string;
-    rentalPricing: IRentalPricing[];
+    //rentalPricing: IRentalPricing[];
     orientation: Orientation;
     buildingImages: IBuildingImage[];
     consignmentStatusHistories: IBuildingStatusHistory[];

@@ -1,28 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useContactRef } from "../../../../context/ContactRefContext";
-
+import React, { useRef } from "react";
 import OfficeComparision from "./OfficeComparision";
 import ReviewSection from "./RevewSection";
 import TabContent from "./TabContent";
 
-// Dữ liệu động
-const dynamicData = {
-  generalInfo: "GIỚI THIỆU TÒA NHÀ THE METT",
-  location: "VỊ TRÍ TÒA NHÀ: LÔ 1.13, KHU ĐÔ THỊ THỦ THIÊM",
-  structure: "CHI TIẾT KẾT CẤU: 500M2 - 2300M2",
-  serviceFee: "PHÍ QUẢN LÝ: 7.5$/M2/THÁNG",
-  fengShui: null,
-  advantages: "ƯU ĐIỂM: GẦN SÔNG, CẢNH ĐẸP",
-  comparison: <OfficeComparision />,
-  review: <ReviewSection />,
-};
+interface OfficeTabsProps {
+  street: string;
+  buildingId?: number;
+}
 
-const OfficeTabs: React.FC = () => {
-  const [isSticky, setIsSticky] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
-  const [width, setWidth] = useState<number | null>(null);
-  const tabRef = useRef<HTMLDivElement>(null);
-  const contactRef = useContactRef();
+const OfficeTabs: React.FC<OfficeTabsProps> = ({ street, buildingId }) => {
+  // Create refs for each section
   const sections = {
     generalInfo: useRef<HTMLDivElement>(null),
     location: useRef<HTMLDivElement>(null),
@@ -33,57 +20,24 @@ const OfficeTabs: React.FC = () => {
     review: useRef<HTMLDivElement>(null),
   };
 
-  // Xử lý scroll cho sticky
-  const handleScroll = () => {
-    if (!tabRef.current || !contactRef.current) return;
-    const rect = tabRef.current.getBoundingClientRect();
-    const contactRect = contactRef.current.getBoundingClientRect();
-    setIsSticky(rect.top <= 70);
-    setIsHidden(
-      contactRect.top <= window.innerHeight && contactRect.bottom >= 0,
-    );
+  const dynamicData = {
+    generalInfo: "Thông tin chung",
+    location: "Vị trí",
+    structure: "Cấu trúc",
+    serviceFee: "Phí dịch vụ",
+    advantages: "Ưu điểm",
+    comparison: <OfficeComparision street={street} buildingId={buildingId} />, // Pass street to OfficeComparision
+    review: <ReviewSection />,
   };
-
-  // Scroll đến section
-  const scrollToSection = (key: string) => {
-    const sectionRef = sections[key as keyof typeof sections];
-    if (sectionRef?.current) {
-      window.scrollTo({
-        top: sectionRef.current.offsetTop - 165,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (tabRef.current) {
-        setWidth(tabRef.current.offsetWidth);
-      }
-    };
-
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("resize", updateWidth);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  });
-  const tabs = [
-    { key: "generalInfo", label: "THÔNG TIN CHUNG" },
-    { key: "location", label: "VỊ TRÍ" },
-    { key: "structure", label: "KẾT CẤU" },
-    { key: "serviceFee", label: "PHÍ DỊCH VỤ" },
-    { key: "advantages", label: "ƯU ĐIỂM" },
-    { key: "comparison", label: "SO SÁNH" },
-    { key: "review", label: "ĐÁNH GIÁ" },
-  ].filter((tab) => dynamicData[tab.key as keyof typeof dynamicData]); // Lọc các mục không có nội dung
 
   return (
     <div className="mt-6">
-      <TabContent dynamicData={dynamicData} sections={sections} />
+      <TabContent
+        dynamicData={dynamicData}
+        sections={sections}
+        street={street}
+        buildingId={buildingId}
+      />
     </div>
   );
 };

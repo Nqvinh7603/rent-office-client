@@ -1,15 +1,21 @@
 import { AudioOutlined } from "@ant-design/icons";
 import { Button, Input, Select } from "antd";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGetProvinces } from "../../../hooks";
 import { IDistrict, IWard } from "../../../interfaces";
-import { useAppSelector } from "../../../redux/hook";
 import { ORENTATION_TRANSLATIONS } from "../../../interfaces/common/constants";
+import { useAppSelector } from "../../../redux/hook";
+import { buildingService } from "../../../services/building/building-service";
+import { formatCurrency } from "../../../utils";
+
 const SearchPanel: React.FC = () => {
   const { provinces } = useGetProvinces();
+  const navigate = useNavigate();
   const selectedRegion = useAppSelector((state) => state.region.selectedRegion);
   const [districtOptions, setDistrictOptions] = useState<IDistrict[]>([]);
   const [wardOptions, setWardOptions] = useState<IWard[]>([]);
+  const [streetOptions, setStreetOptions] = useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const [selectedWard, setSelectedWard] = useState<string | null>(null);
   const [selectedStreet, setSelectedStreet] = useState<string | null>(null);
@@ -44,6 +50,86 @@ const SearchPanel: React.FC = () => {
     setSelectedDirection(null);
   }, [selectedRegion]);
 
+  useEffect(() => {
+    const fetchStreets = async () => {
+      if (selectedWard && selectedDistrict) {
+        try {
+          const districtName = districtOptions.find(
+            (district) => district.code === Number(selectedDistrict),
+          )?.name;
+
+          const wardName = wardOptions.find(
+            (ward) => ward.code === Number(selectedWard),
+          )?.name;
+
+          if (wardName && districtName) {
+            const response = await buildingService.getAllStreet(
+              wardName,
+              districtName,
+            );
+            setStreetOptions(response.payload ?? []);
+          } else {
+            setStreetOptions([]);
+          }
+        } catch (error) {
+          console.error("Failed to fetch streets:", error);
+          setStreetOptions([]);
+        }
+      } else {
+        setStreetOptions([]);
+      }
+    };
+
+    fetchStreets();
+  }, [selectedWard, selectedDistrict]);
+
+  const handleSearch = () => {
+    const queryParams = new URLSearchParams();
+
+    if (selectedDistrict) {
+      const districtName = districtOptions.find(
+        (district) => district.code === Number(selectedDistrict),
+      )?.name;
+      if (districtName) {
+        queryParams.append("district", districtName);
+      }
+    }
+    if (selectedWard) {
+      const wardName = wardOptions.find(
+        (ward) => ward.code === Number(selectedWard),
+      )?.name;
+      if (wardName) {
+        queryParams.append("ward", wardName);
+      }
+    }
+    if (selectedStreet) {
+      queryParams.append("street", selectedStreet);
+    }
+    if (selectedArea) {
+      if (selectedArea.startsWith("minArea")) {
+        queryParams.append("minArea", selectedArea.split("=")[1]);
+      } else if (selectedArea.startsWith("maxArea")) {
+        queryParams.append("maxArea", selectedArea.split("=")[1]);
+      }
+    }
+
+    // Handle price correctly
+    if (selectedPrice) {
+      if (selectedPrice.startsWith("minPrice")) {
+        queryParams.append("minPrice", selectedPrice.split("=")[1]);
+      } else if (selectedPrice.startsWith("maxPrice")) {
+        queryParams.append("maxPrice", selectedPrice.split("=")[1]);
+      }
+    }
+
+    if (selectedDirection) {
+      queryParams.append("orientation", selectedDirection);
+    }
+
+    // Navigate to the OfficeList page with the constructed query string
+    window.location.href = `/van-phong?${queryParams.toString()}`;
+  };
+
   return (
     <div className="-translate-y-18 relative bottom-12 left-1/2 z-10 w-11/12 -translate-x-1/2 transform rounded-md bg-white p-4 shadow-lg lg:w-3/4">
       <div className="grid grid-cols-1 items-center gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -75,7 +161,11 @@ const SearchPanel: React.FC = () => {
             />
           }
         />
-        <Button type="primary" className="py-4 text-white">
+        <Button
+          type="primary"
+          className="py-4 text-white"
+          onClick={handleSearch}
+        >
           TÌM KIẾM
         </Button>
       </div>
@@ -88,12 +178,6 @@ const SearchPanel: React.FC = () => {
           allowClear
           value={selectedDistrict}
           onChange={setSelectedDistrict}
-          filterOption={(input, option) =>
-            (option?.children
-              ?.toString()
-              .toLowerCase()
-              .indexOf(input.toLowerCase()) ?? -1) >= 0
-          }
         >
           {districtOptions.map((district) => (
             <Select.Option key={district.code} value={district.code}>
@@ -108,12 +192,6 @@ const SearchPanel: React.FC = () => {
           allowClear
           value={selectedWard}
           onChange={setSelectedWard}
-          filterOption={(input, option) =>
-            (option?.children
-              ?.toString()
-              .toLowerCase()
-              .indexOf(input.toLowerCase()) ?? -1) >= 0
-          }
         >
           {wardOptions.map((ward) => (
             <Select.Option key={ward.code} value={ward.code}>
@@ -129,8 +207,11 @@ const SearchPanel: React.FC = () => {
           value={selectedStreet}
           onChange={setSelectedStreet}
         >
-          <Select.Option value="duong-a">Đường A</Select.Option>
-          <Select.Option value="duong-b">Đường B</Select.Option>
+          {streetOptions.map((street, index) => (
+            <Select.Option key={index} value={street}>
+              {street}
+            </Select.Option>
+          ))}
         </Select>
       </div>
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
@@ -139,22 +220,75 @@ const SearchPanel: React.FC = () => {
           className="w-full rounded-md border"
           allowClear
           value={selectedArea}
-          onChange={setSelectedArea}
-        >
-          <Select.Option value="50m2">Dưới 50m2</Select.Option>
-          <Select.Option value="100m2">Dưới 100m2</Select.Option>
-        </Select>
-
+          onChange={(value) => setSelectedArea(value)}
+          showSearch
+          options={[
+            {
+              label: "Dưới 50m²",
+              value: "maxArea=50",
+            },
+            {
+              label: "Dưới 100m²",
+              value: "maxArea=100",
+            },
+            {
+              label: "Dưới 200m²",
+              value: "maxArea=200",
+            },
+            {
+              label: "Dưới 500m²",
+              value: "maxArea=500",
+            },
+            {
+              label: "Trên 500m²",
+              value: "minArea=500",
+            },
+          ]}
+          filterOption={(input, option) =>
+            (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+          }
+        />
         <Select
           placeholder="Tất cả giá"
           className="w-full rounded-md border"
           allowClear
           value={selectedPrice}
-          onChange={setSelectedPrice}
-        >
-          <Select.Option value="5tr">Dưới 5 triệu</Select.Option>
-          <Select.Option value="10tr">Dưới 10 triệu</Select.Option>
-        </Select>
+          onChange={(value) => setSelectedPrice(value)}
+          showSearch
+          options={[
+            {
+              label: `Dưới ${formatCurrency(300000)} VNĐ/m²`,
+              value: "maxPrice=300000",
+            },
+            {
+              label: `Dưới ${formatCurrency(500000)} VNĐ/m²`,
+              value: "maxPrice=500000",
+            },
+            {
+              label: `Trên ${formatCurrency(500000)} VNĐ/m²`,
+              value: "minPrice=500000",
+            },
+            {
+              label: `Dưới ${formatCurrency(1000000)} VNĐ/m²`,
+              value: "maxPrice=1000000",
+            },
+            {
+              label: `Dưới ${formatCurrency(2000000)} VNĐ/m²`,
+              value: "maxPrice=2000000",
+            },
+            {
+              label: `Trên ${formatCurrency(2000000)} VNĐ/m²`,
+              value: "minPrice=2000000",
+            },
+            {
+              label: `Dưới ${formatCurrency(3000000)} VNĐ/m²`,
+              value: "maxPrice=2000000",
+            },
+          ]}
+          filterOption={(input, option) =>
+            (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+          }
+        />
 
         <Select
           placeholder="Chọn hướng"
@@ -166,9 +300,7 @@ const SearchPanel: React.FC = () => {
               value,
             }),
           )}
-          filterOption={(input, option) =>
-            option?.label.toLowerCase().includes(input.toLowerCase()) ?? false
-          }
+          onChange={setSelectedDirection}
         />
       </div>
     </div>

@@ -1,8 +1,7 @@
-import { DollarCircleOutlined } from "@ant-design/icons";
 import React from "react";
 import { FaRegStar } from "react-icons/fa";
 import { IoMdPricetags } from "react-icons/io";
-import { PiMoney } from "react-icons/pi";
+import { PiMapPinSimpleArea, PiMoney } from "react-icons/pi";
 import { TbLocation } from "react-icons/tb";
 
 interface OfficeDetailsProps {
@@ -35,7 +34,11 @@ const OfficeDetails: React.FC<OfficeDetailsProps> = ({
 
       <ul className="space-y-5 text-gray-700">
         <li className="flex items-center">
-          <DollarCircleOutlined className="mr-3 text-lg text-[#3162ad]" />
+          <PiMapPinSimpleArea
+            className="mr-3 text-lg text-[#3162ad]"
+            size={18}
+          />
+          {/* <DollarCircleOutlined className="mr-3 text-lg text-[#3162ad]" /> */}
           <span className="font-semibold">Diện tích</span>: {details.area}
         </li>
         <li className="flex items-center">

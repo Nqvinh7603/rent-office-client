@@ -24,7 +24,8 @@ export interface IConsignmentUpdate {
     street: string;
     description: string;
     orientation: Orientation;
-    rentalPricing: IRentalPricing[];
+    //rentalPricing: IRentalPricing[];
+    buildingUnits: IBuildingUnit[];
     buildingImages: IConsignmentImageUpdate[];
     consignmentStatusHistories: IConsignmentStatusHistoryUpdate[];
     buildingType: IBuildingType;
@@ -33,6 +34,23 @@ export interface IConsignmentUpdate {
     updatedAt?: string;
     paymentPolicies: IPaymentPolicy[];
     customer: ICustomerUpdate;
+}
+
+export interface IBuildingUnit {
+    buildingUnitId: number;
+    unitName?: string;
+    floor: number;
+    rentalPricing: IRentalPricing[];
+    rentAreas: IRentArea[];
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IRentArea {
+    rentAreaId: number;
+    area: number;
+    createdAt: string;
+    updatedAt?: string;
 }
 
 export interface IConsignmentImageUpdate {

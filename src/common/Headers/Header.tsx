@@ -9,11 +9,11 @@ import React, { useEffect } from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useGetProvinces } from "../../hooks";
 import useGeolocation from "../../hooks/useLocation";
 import { setSelectedRegion } from "../../redux/slices/regionSlice";
 import { RootState } from "../../redux/store";
 import NavigationBar from "./NavigationBar";
-import { useGetProvinces } from "../../hooks";
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
@@ -41,9 +41,14 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     if (provinces && provinces.length > 0) {
-      fetchLocationUsingGeolocation();
+      const hoChiMinh = provinces.find(
+        (province) => province.name.toLowerCase() === "hồ chí minh",
+      );
+      if (hoChiMinh) {
+        dispatch(setSelectedRegion(hoChiMinh.name));
+      }
     }
-  }, [provinces]);
+  }, [provinces, dispatch]);
 
   return (
     <header className="shadow-md">

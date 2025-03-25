@@ -1,6 +1,7 @@
-import { EnvironmentOutlined, SelectOutlined } from "@ant-design/icons";
+import { SelectOutlined } from "@ant-design/icons";
 import { Button, Carousel, Modal } from "antd";
 import React, { useState } from "react";
+import { PiMapPinSimpleArea } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { IBuilding } from "../../../interfaces";
 import { IBuildingLevel } from "../../../interfaces/client";
@@ -86,11 +87,48 @@ const OfficeCategoryList: React.FC<OfficeCategoryListProps> = ({
                       className="h-48 w-full object-cover"
                     />
                     <div className="absolute left-2 top-2 rounded bg-[#3162ad] px-3 py-1 text-sm font-semibold text-white">
-                      {building.rentalPricing.length > 0
-                        ? `${building.rentalPricing[
-                            building.rentalPricing.length - 1
-                          ].price.toLocaleString()} VND/m²`
-                        : "Giá chưa cập nhật"}
+                      {(() => {
+                        if (
+                          !building?.buildingUnits ||
+                          building.buildingUnits.length === 0
+                        ) {
+                          return "Giá chưa cập nhật";
+                        }
+
+                        const latestPrices = building.buildingUnits
+                          .map((unit) => {
+                            if (
+                              !unit?.rentalPricing ||
+                              unit.rentalPricing.length === 0
+                            ) {
+                              return null;
+                            }
+
+                            const latestPricing = unit.rentalPricing.reduce(
+                              (latest, pricing) => {
+                                if (
+                                  !latest ||
+                                  new Date(pricing.createdAt) >
+                                    new Date(latest.createdAt)
+                                ) {
+                                  return pricing;
+                                }
+                                return latest;
+                              },
+                              unit.rentalPricing[0],
+                            );
+
+                            return latestPricing ? latestPricing.price : null;
+                          })
+                          .filter((price) => price !== null);
+
+                        if (latestPrices.length === 0) {
+                          return "Giá chưa cập nhật";
+                        }
+
+                        const minPrice = Math.min(...latestPrices);
+                        return `${minPrice.toLocaleString()} VND/m²`;
+                      })()}
                     </div>
                   </div>
                   <div className="flex flex-grow flex-col p-4">
@@ -102,7 +140,7 @@ const OfficeCategoryList: React.FC<OfficeCategoryListProps> = ({
                     </p>
                     <div className="mt-2 text-sm text-gray-600">
                       <div className="flex items-center gap-2">
-                        <EnvironmentOutlined /> Diện tích:{" "}
+                        <PiMapPinSimpleArea size={17} /> Diện tích:{" "}
                         {building.buildingUnits
                           .flatMap((unit) =>
                             unit.rentAreas.map((area) => area.area),
@@ -116,6 +154,7 @@ const OfficeCategoryList: React.FC<OfficeCategoryListProps> = ({
                       </div>
                       <div className="mt-1 flex items-center gap-2">
                         <SelectOutlined />
+                        Hướng:{" "}
                         {ORENTATION_TRANSLATIONS[building.orientation] ||
                           "Không xác định"}
                       </div>

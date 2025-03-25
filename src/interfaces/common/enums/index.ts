@@ -40,3 +40,12 @@ export enum AppointmentStatus {
     COMPLETED = "COMPLETED",
     CANCELLED = "CANCELLED",
 }
+
+export enum BuildingUnitStatus {
+    AVAILABLE = "AVAILABLE",           // Đang có sẵn để thuê
+    RENTED = "RENTED",             // Đã được thuê
+    UNDER_MAINTENANCE = "UNDER_MAINTENANCE",  // Đang bảo trì
+    RESERVED = "RESERVED",           // Đã có người đặt trước
+    UNAVAILABLE = "UNAVAILABLE",         // Không thể cho thuê (chủ tòa nhà không muốn cho thuê)
+
+}

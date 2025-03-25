@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Dropdown, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useGetProvinces } from "../../hooks";
 import useStickyNavigation from "../../hooks/useStickyNavigation";
 import { IDistrict } from "../../interfaces";
@@ -12,6 +13,7 @@ import { buildingLevelService } from "../../services/building/building-level-ser
 const NavigationBar: React.FC = () => {
   const { provinces } = useGetProvinces();
   const isSticky = useStickyNavigation();
+  const navigate = useNavigate();
   const selectedRegion = useSelector(
     (state: RootState) => state.region.selectedRegion,
   );
@@ -33,10 +35,18 @@ const NavigationBar: React.FC = () => {
 
   const menuItems = Array.isArray(districtOptions)
     ? districtOptions.map((district) => ({
-        key: district.code,
+        key: district.name,
         label: district.name,
       }))
     : [];
+
+  const handleBuildingLevelSelect = (
+    district: string,
+    buildingLevel: string,
+  ) => {
+    // Use window.location.href to force a page reload
+    window.location.href = `/van-phong?district=${district}&buildingLevel=${buildingLevel}`;
+  };
 
   return (
     <div>
@@ -72,9 +82,18 @@ const NavigationBar: React.FC = () => {
                 )
                 .map((level) => (
                   <li key={level.buildingLevelId} className="group relative">
-                    <Dropdown menu={{ items: menuItems }}>
+                    <Dropdown
+                      menu={{
+                        items: menuItems,
+                        onClick: (e) =>
+                          handleBuildingLevelSelect(
+                            e.key,
+                            level.buildingLevelName,
+                          ),
+                      }}
+                    >
                       <a
-                        href={`#building-level-${level.buildingLevelId}`}
+                        onClick={(e) => e.preventDefault()}
                         className="flex items-center hover:underline"
                         style={{ fontSize: "14px" }}
                       >

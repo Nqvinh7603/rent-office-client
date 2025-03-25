@@ -118,6 +118,14 @@ const DepositForm: React.FC = () => {
             status: ConsignmentStatus.PENDING,
           },
         ],
+        buildingUnits: values.buildings[0].buildingUnits.map((unit) => ({
+          buildingUnitId: unit.buildingUnitId,
+          unitName: unit.unitName,
+          floor: unit.floor,
+          rentalPricing: unit.rentalPricing, // Provide a default or actual value
+          rentAreas: unit.rentAreas, // Provide a default or actual value
+          createdAt: unit.createdAt, // Provide a default or actual value
+        })),
       },
     ];
 
@@ -285,7 +293,7 @@ const DepositForm: React.FC = () => {
                   allowClear
                 />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 label="Giá cho thuê"
                 name={["buildings", "0", "rentalPricing", 0, "price"]}
                 rules={[
@@ -307,7 +315,7 @@ const DepositForm: React.FC = () => {
                     </span>
                   }
                 />
-              </Form.Item>
+              </Form.Item> */}
             </div>
             <div className="flex flex-wrap gap-4">
               <Form.Item
@@ -445,7 +453,7 @@ const DepositForm: React.FC = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="Số tầng"
+                label="Tổng số tầng"
                 name={["buildings", "0", "numberOfFloors"]}
                 rules={[
                   {
@@ -462,7 +470,7 @@ const DepositForm: React.FC = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="Tổng diện tích"
+                label="Tổng diện tích sàn"
                 name={["buildings", "0", "totalArea"]}
                 rules={[
                   {
@@ -479,6 +487,158 @@ const DepositForm: React.FC = () => {
                 />
               </Form.Item>
             </div>
+
+            <Form.Item label="Danh sách đơn vị tài sản">
+              <div className="rounded-md border p-4">
+                <Form.List name={["buildings", 0, "buildingUnits"]}>
+                  {(fields, { add, remove }) => (
+                    <div>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <div key={key} className="mb-2 flex flex-wrap gap-4">
+                          <Form.Item
+                            {...restField}
+                            name={[name, "unitName"]}
+                            label="Tên đơn vị"
+                            rules={[
+                              { required: true, message: "Nhập tên đơn vị!" },
+                            ]}
+                            className="flex-1"
+                          >
+                            <Input placeholder="Nhập tên đơn vị" allowClear />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[name, "floor"]}
+                            label="Tầng"
+                            rules={[
+                              { required: true, message: "Nhập số tầng!" },
+                            ]}
+                            className="flex-1"
+                          >
+                            <InputNumber
+                              min={1}
+                              style={{ width: "100%" }}
+                              placeholder="Nhập số tầng"
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[name, "rentalPricing", 0, "price"]}
+                            label="Giá cho thuê"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Giá cho thuê không được để trống!",
+                              },
+                            ]}
+                            className="flex-1"
+                          >
+                            <InputNumber
+                              min={0}
+                              style={{ width: "100%" }}
+                              formatter={(value) => formatCurrency(value)}
+                              parser={(value) =>
+                                parseCurrency(value) as unknown as 0
+                              }
+                              addonAfter={
+                                <span>
+                                  VND/m<sup>2</sup>/tháng
+                                </span>
+                              }
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[name, "rentAreas"]}
+                            label="Diện tích cho thuê"
+                            className="flex-1"
+                          >
+                            <Form.List name={[name, "rentAreas"]}>
+                              {(
+                                areaFields,
+                                { add: addArea, remove: removeArea },
+                              ) => (
+                                <div>
+                                  {areaFields.map(
+                                    ({
+                                      key: areaKey,
+                                      name: areaName,
+                                      ...areaRestField
+                                    }) => (
+                                      <div
+                                        key={areaKey}
+                                        className="mb-2 flex items-center gap-4"
+                                      >
+                                        <Form.Item
+                                          {...areaRestField}
+                                          name={[areaName, "area"]}
+                                          rules={[
+                                            {
+                                              required: true,
+                                              message: "Nhập diện tích!",
+                                            },
+                                          ]}
+                                          className="flex-1"
+                                        >
+                                          <InputNumber
+                                            min={0}
+                                            style={{ width: "100%" }}
+                                            placeholder="Nhập diện tích"
+                                            addonAfter="m²"
+                                          />
+                                        </Form.Item>
+                                        <Button
+                                          type="link"
+                                          onClick={() => removeArea(areaName)}
+                                          className="items-center text-red-500"
+                                          icon={
+                                            <PlusOutlined
+                                              rotate={45}
+                                              className="mb-5"
+                                            />
+                                          }
+                                        />
+                                      </div>
+                                    ),
+                                  )}
+                                  <Button
+                                    type="primary"
+                                    htmlType="button"
+                                    onClick={() => addArea()}
+                                    block
+                                  >
+                                    + Thêm diện tích
+                                  </Button>
+                                </div>
+                              )}
+                            </Form.List>
+                          </Form.Item>
+
+                          <Button
+                            type="link"
+                            onClick={() => remove(name)}
+                            className="items-center text-red-500"
+                            icon={<PlusOutlined rotate={45} className="mb-5" />}
+                          />
+                        </div>
+                      ))}
+                      <Button
+                        type="primary"
+                        htmlType="button"
+                        className="w-full bg-[#3162ad] hover:bg-[#3162ad]"
+                        onClick={() => add()}
+                        block
+                      >
+                        + Thêm đơn vị tài sản
+                      </Button>
+                    </div>
+                  )}
+                </Form.List>
+              </div>
+            </Form.Item>
 
             <Form.Item label="Các loại phí">
               <div className="rounded-md border p-4">

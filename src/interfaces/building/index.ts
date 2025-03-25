@@ -42,6 +42,7 @@ export interface IBuildingUnit {
     unitName?: string;
     floor: number;
     rentAreas: IRentArea[];
+    rentalPricing: IRentalPricing[];
     createdAt: string;
     updatedAt?: string;
 }
@@ -111,7 +112,7 @@ export interface IBuilding {
     buildingNumber: string;
     street: string;
     description: string;
-    rentalPricing: IRentalPricing[];
+    //rentalPricing: IRentalPricing[];
     orientation: Orientation;
     buildingImages: IBuildingImage[];
     consignmentStatusHistories: IBuildingStatusHistory[];
@@ -170,6 +171,8 @@ export interface BuildingCompanyFilterCriteria {
     street?: string;
     maxPrice?: number;
     minPrice?: number;
+    minArea?: number;
+    maxArea?: number;
     staffName?: string;
     // buildingStatus?: BuildingStatus;
     orientation?: Orientation;

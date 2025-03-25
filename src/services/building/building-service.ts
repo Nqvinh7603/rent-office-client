@@ -5,7 +5,7 @@ export interface IBuildingService {
 
     getBuildingById(buildingId: number): Promise<ApiResponse<IBuilding>>;
     getBuildingCompanys(pagination: PaginationParams, filter?: BuildingCompanyFilterCriteria): Promise<ApiResponse<Page<IBuilding>>>;
-
+    getAllStreet(ward: string, district: string): Promise<ApiResponse<string[]>>;
 }
 const apiClient = createApiClient("building-clients");
 
@@ -23,10 +23,13 @@ class BuildingService implements IBuildingService {
                 params: {
                     ...pagination,
                     ...filter,
-
                 },
             })
         ).data;
+    }
+
+    async getAllStreet(ward: string, district: string): Promise<ApiResponse<string[]>> {
+        return (await apiClient.get(`/streets?district=${district}&ward=${ward}`)).data;
     }
 
 }

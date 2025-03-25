@@ -26,7 +26,8 @@ export interface IConsignment {
     street: string;
     description: string;
     orientation: Orientation;
-    rentalPricing: IRentalPricing[];
+    //rentalPricing: IRentalPricing[];
+    buildingUnits: IBuildingUnit[];
     buildingImages: IConsignmentImage[];
     consignmentStatusHistories: IConsignmentStatusHistory[];
     buildingType: IBuildingType;
@@ -89,6 +90,25 @@ export interface IPaymentPolicy {
     paymentPolicyId: number;
     paymentCycle: string;
     depositTerm: number;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+
+
+export interface IBuildingUnit {
+    buildingUnitId: number;
+    unitName?: string;
+    floor: number;
+    rentalPricing: IRentalPricing[];
+    rentAreas: IRentArea[];
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IRentArea {
+    rentAreaId: number;
+    area: number;
     createdAt: string;
     updatedAt?: string;
 }

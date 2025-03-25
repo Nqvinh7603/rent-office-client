@@ -1,12 +1,14 @@
-import { EnvironmentOutlined, SelectOutlined } from "@ant-design/icons";
+import { SelectOutlined } from "@ant-design/icons";
 import { Button, Modal, Pagination, Spin } from "antd";
 import React, { useEffect, useState } from "react";
+import { PiMapPinSimpleArea } from "react-icons/pi";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Breadcrumbs from "../../../common/Breadcrums";
 import { useGetProvinces } from "../../../hooks";
 import { IBuilding } from "../../../interfaces";
 import { ORENTATION_TRANSLATIONS } from "../../../interfaces/common/constants";
+import { Orientation } from "../../../interfaces/common/enums";
 import { useAppDispatch } from "../../../redux/hook";
 import { addBuilding } from "../../../redux/slices/appointmentSlice";
 import { RootState } from "../../../redux/store";
@@ -47,12 +49,32 @@ const OfficeList: React.FC = () => {
       showScheduleModal();
     }
   };
+  const buildingLevel = searchParams.get("buildingLevel");
+  const district = searchParams.get("district");
+  const ward = searchParams.get("ward");
+  const orientation = searchParams.get("orientation");
+  const street = searchParams.get("street");
+  const minPrice = searchParams.get("minPrice");
+  const maxPrice = searchParams.get("maxPrice");
+  const minArea = searchParams.get("minArea");
+  const maxArea = searchParams.get("maxArea");
   const fetchBuildings = async () => {
     setIsLoading(true);
     try {
       const response = await buildingService.getBuildingCompanys(
         { page: currentPage, pageSize: itemsPerPage },
-        city ? { city: city } : {}, // Ensure the city filter is applied only if it exists
+        {
+          ...(city ? { city: city } : {}),
+          ...(buildingLevel ? { buildingLevel: buildingLevel } : {}),
+          ...(district ? { district: district } : {}),
+          ...(ward ? { ward: ward } : {}),
+          ...(orientation ? { orientation: orientation as Orientation } : {}),
+          ...(street ? { street: street } : {}),
+          ...(minPrice ? { minPrice: Number(minPrice) } : {}),
+          ...(maxPrice ? { maxPrice: Number(maxPrice) } : {}),
+          ...(minArea ? { minArea: Number(minArea) } : {}),
+          ...(maxArea ? { maxArea: Number(maxArea) } : {}),
+        },
       );
       const { content, meta } = response.payload || {};
       setBuildings(content || []);
@@ -97,71 +119,132 @@ const OfficeList: React.FC = () => {
         <Breadcrumbs
           items={[
             { name: "TRANG CHỦ", path: "/" },
-            { name: "TÒA NHÀ", path: "" },
+            //{ name: "TÒA NHÀ", path: "" },
+            ...(city
+              ? [
+                  {
+                    name: `TOÀ NHÀ ${city.toUpperCase()}${
+                      district ? ` - ${district.toUpperCase()}` : ""
+                    }${buildingLevel ? ` - HẠNG ${buildingLevel}` : ""}`,
+                    path: "",
+                  },
+                ]
+              : []),
           ]}
           onBack={() => navigate("/")}
         />
-        <h1 className="mb-6 text-2xl font-bold text-gray-900">Các toà nhà</h1>
+        <h1 className="mb-6 text-2xl font-bold text-gray-900">
+          Danh sách toà nhà
+        </h1>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {buildings.map((building) => (
-            <div
-              key={building.buildingId}
-              className="flex h-full flex-col overflow-hidden rounded-lg bg-white shadow-lg"
-              onClick={() => handleCardClick(building.buildingId)}
-            >
-              <div className="relative">
-                <img
-                  src={building.buildingImages?.[0]?.imgUrl}
-                  alt={building.buildingName}
-                  className="h-48 w-full object-cover"
-                />
-                <div className="absolute left-2 top-2 rounded bg-[#3162ad] px-3 py-1 text-sm font-semibold text-white">
-                  {building.rentalPricing.length > 0
-                    ? `${building.rentalPricing[building.rentalPricing.length - 1].price.toLocaleString()} VND/m²`
-                    : "Giá chưa cập nhật"}
+          {buildings.length > 0 ? (
+            buildings.map((building) => (
+              <div
+                key={building.buildingId}
+                className="flex h-full flex-col overflow-hidden rounded-lg bg-white shadow-lg"
+                onClick={() => handleCardClick(building.buildingId)}
+              >
+                <div className="relative">
+                  <img
+                    src={building.buildingImages?.[0]?.imgUrl}
+                    alt={building.buildingName}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="absolute left-2 top-2 rounded bg-[#3162ad] px-3 py-1 text-sm font-semibold text-white">
+                    {(() => {
+                      if (
+                        !building?.buildingUnits ||
+                        building.buildingUnits.length === 0
+                      ) {
+                        return "Giá chưa cập nhật";
+                      }
+
+                      const latestPrices = building.buildingUnits
+                        .map((unit) => {
+                          if (
+                            !unit?.rentalPricing ||
+                            unit.rentalPricing.length === 0
+                          ) {
+                            return null;
+                          }
+
+                          const latestPricing = unit.rentalPricing.reduce(
+                            (latest, pricing) => {
+                              if (
+                                !latest ||
+                                new Date(pricing.createdAt) >
+                                  new Date(latest.createdAt)
+                              ) {
+                                return pricing;
+                              }
+                              return latest;
+                            },
+                            unit.rentalPricing[0],
+                          );
+
+                          return latestPricing ? latestPricing.price : null;
+                        })
+                        .filter((price) => price !== null);
+
+                      if (latestPrices.length === 0) {
+                        return "Giá chưa cập nhật";
+                      }
+
+                      const minPrice = Math.min(...latestPrices);
+                      return `${minPrice.toLocaleString()} VND/m²`;
+                    })()}
+                  </div>
+                </div>
+                <div className="flex-grow p-4">
+                  <h3 className="text-lg font-bold text-[#3162ad]">
+                    {building.buildingName}
+                  </h3>
+                  <p className="mt-1 text-xs text-gray-600">
+                    {`${building.street}, ${building.ward}, ${building.district}, ${building.city}`}
+                  </p>
+                  <div className="mt-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <PiMapPinSimpleArea size={17} />
+                      Diện tích:{" "}
+                      {[
+                        ...new Set(
+                          building.buildingUnits.flatMap((unit) =>
+                            unit.rentAreas.map((area) => area.area),
+                          ),
+                        ),
+                      ]
+                        .sort((a, b) => a - b)
+                        .join(", ")}{" "}
+                      m²
+                    </div>
+                    <div className="mt-1 flex items-center gap-2">
+                      <SelectOutlined />
+                      {ORENTATION_TRANSLATIONS[building.orientation] ||
+                        "Không xác định"}
+                    </div>
+                  </div>
+                </div>
+                <div className="border-t p-4">
+                  <Button
+                    type="link"
+                    icon={<SelectOutlined />}
+                    className="font-semibold text-[#3162ad]"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering the card click
+                      handleSchedule(building.buildingId);
+                    }}
+                  >
+                    Chọn đi xem
+                  </Button>
                 </div>
               </div>
-              <div className="flex-grow p-4">
-                <h3 className="text-lg font-bold text-[#3162ad]">
-                  {building.buildingName}
-                </h3>
-                <p className="mt-1 text-xs text-gray-600">
-                  {`${building.street}, ${building.ward}, ${building.district}, ${building.city}`}
-                </p>
-                <div className="mt-2 text-sm text-gray-600">
-                  <div className="flex items-center gap-2">
-                    <EnvironmentOutlined />
-                    Diện tích:{" "}
-                    {building.buildingUnits
-                      .flatMap((unit) =>
-                        unit.rentAreas.map((area) => area.area),
-                      )
-                      .join(", ")}{" "}
-                    m²
-                  </div>
-                  <div className="mt-1 flex items-center gap-2">
-                    <SelectOutlined />
-                    {ORENTATION_TRANSLATIONS[building.orientation] ||
-                      "Không xác định"}
-                  </div>
-                </div>
-              </div>
-              <div className="border-t p-4">
-                <Button
-                  type="link"
-                  icon={<SelectOutlined />}
-                  className="font-semibold text-[#3162ad]"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering the card click
-                    handleSchedule(building.buildingId);
-                  }}
-                >
-                  Chọn đi xem
-                </Button>
-              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-500">
+              Không có tòa nhà nào!
             </div>
-          ))}
+          )}
         </div>
 
         <div className="mt-8 flex justify-center">
@@ -176,6 +259,26 @@ const OfficeList: React.FC = () => {
           />
         </div>
       </div>
+      <Modal
+        title={null}
+        open={isScheduleModalVisible}
+        onCancel={closeScheduleModal}
+        footer={[
+          <Button
+            key="view-list"
+            type="primary"
+            className="mx-auto bg-[#3162ad] text-white"
+            onClick={() => (window.location.href = "/chon-di-xem")}
+          >
+            Xem danh sách
+          </Button>,
+        ]}
+        width={600}
+      >
+        <div className="text-center text-lg font-medium text-gray-700">
+          Tòa nhà văn phòng đã được lưu vào danh sách hẹn đi xem thành công.
+        </div>
+      </Modal>
       <Modal
         title={null}
         open={isScheduleModalVisible}
