@@ -166,7 +166,12 @@ const OfficeDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      <OfficeTabs street={building.street} buildingId={building.buildingId} />
+      <OfficeTabs
+        street={building.street}
+        buildingId={building.buildingId}
+        city={building.city}
+        district={building.district}
+      />
     </div>
   );
 };

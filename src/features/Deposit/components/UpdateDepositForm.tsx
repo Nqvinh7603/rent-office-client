@@ -466,11 +466,11 @@ const UpdateDepositForm: React.FC = () => {
                   allowClear
                   value={selectedDistrict}
                   onChange={setSelectedDistrict}
+                  optionFilterProp="label"
                   filterOption={(input, option) =>
-                    (option?.label
-                      ?.toString()
+                    (String(option?.children) ?? "")
                       .toLowerCase()
-                      .indexOf(input.toLowerCase()) ?? -1) >= 0
+                      .includes(input.toLowerCase())
                   }
                 >
                   {districtOptions.map((district) => (
@@ -497,11 +497,11 @@ const UpdateDepositForm: React.FC = () => {
                   allowClear
                   value={selectedWard}
                   onChange={setSelectedWard}
+                  optionFilterProp="label"
                   filterOption={(input, option) =>
-                    (option?.label
-                      ?.toString()
+                    (String(option?.children) ?? "")
                       .toLowerCase()
-                      .indexOf(input.toLowerCase()) ?? -1) >= 0
+                      .includes(input.toLowerCase())
                   }
                 >
                   {wardOptions.map((ward) => (

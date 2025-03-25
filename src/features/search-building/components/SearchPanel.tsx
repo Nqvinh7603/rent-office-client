@@ -178,6 +178,12 @@ const SearchPanel: React.FC = () => {
           allowClear
           value={selectedDistrict}
           onChange={setSelectedDistrict}
+          optionFilterProp="label"
+          filterOption={(input, option) =>
+            (String(option?.children) ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
         >
           {districtOptions.map((district) => (
             <Select.Option key={district.code} value={district.code}>
@@ -187,11 +193,18 @@ const SearchPanel: React.FC = () => {
         </Select>
 
         <Select
+          showSearch
           placeholder="Tất cả phường/xã"
           className="w-full rounded-md border"
           allowClear
           value={selectedWard}
           onChange={setSelectedWard}
+          optionFilterProp="label"
+          filterOption={(input, option) =>
+            (String(option?.children) ?? "")
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
         >
           {wardOptions.map((ward) => (
             <Select.Option key={ward.code} value={ward.code}>

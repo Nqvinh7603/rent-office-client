@@ -142,7 +142,7 @@ const OfficeList: React.FC = () => {
             buildings.map((building) => (
               <div
                 key={building.buildingId}
-                className="flex h-full flex-col overflow-hidden rounded-lg bg-white shadow-lg"
+                className="flex h-full cursor-pointer flex-col overflow-hidden rounded-lg bg-white shadow-lg"
                 onClick={() => handleCardClick(building.buildingId)}
               >
                 <div className="relative">
@@ -220,6 +220,7 @@ const OfficeList: React.FC = () => {
                     </div>
                     <div className="mt-1 flex items-center gap-2">
                       <SelectOutlined />
+                      Hướng:{" "}
                       {ORENTATION_TRANSLATIONS[building.orientation] ||
                         "Không xác định"}
                     </div>

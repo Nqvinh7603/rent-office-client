@@ -6,9 +6,16 @@ import TabContent from "./TabContent";
 interface OfficeTabsProps {
   street: string;
   buildingId?: number;
+  city: string;
+  district: string;
 }
 
-const OfficeTabs: React.FC<OfficeTabsProps> = ({ street, buildingId }) => {
+const OfficeTabs: React.FC<OfficeTabsProps> = ({
+  street,
+  buildingId,
+  city,
+  district,
+}) => {
   // Create refs for each section
   const sections = {
     generalInfo: useRef<HTMLDivElement>(null),
@@ -26,7 +33,14 @@ const OfficeTabs: React.FC<OfficeTabsProps> = ({ street, buildingId }) => {
     structure: "Cấu trúc",
     serviceFee: "Phí dịch vụ",
     advantages: "Ưu điểm",
-    comparison: <OfficeComparision street={street} buildingId={buildingId} />, // Pass street to OfficeComparision
+    comparison: (
+      <OfficeComparision
+        street={street}
+        buildingId={buildingId}
+        city={city}
+        district={district}
+      />
+    ), // Pass street to OfficeComparision
     review: <ReviewSection />,
   };
 
@@ -37,6 +51,8 @@ const OfficeTabs: React.FC<OfficeTabsProps> = ({ street, buildingId }) => {
         sections={sections}
         street={street}
         buildingId={buildingId}
+        city={city}
+        district={district}
       />
     </div>
   );

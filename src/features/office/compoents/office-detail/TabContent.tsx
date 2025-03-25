@@ -23,6 +23,8 @@ interface TabContentProps {
   };
   street?: string;
   buildingId?: number;
+  city?: string;
+  district?: string;
 }
 
 const TabContent: React.FC<TabContentProps> = ({
@@ -30,6 +32,8 @@ const TabContent: React.FC<TabContentProps> = ({
   sections,
   street,
   buildingId,
+  city,
+  district,
 }) => {
   const [buildings, setBuildings] = useState<IBuilding[]>([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -42,13 +46,14 @@ const TabContent: React.FC<TabContentProps> = ({
     try {
       const response = await buildingService.getBuildingCompanys(
         { page: currentPage, pageSize: itemsPerPage },
-        { street },
+        {
+          ...(street ? { street: street } : {}),
+          ...(city ? { city: city } : {}),
+          ...(district ? { district: district } : {}),
+        },
       );
       const { content, meta } = response.payload || {};
-      const filteredBuildings = (content || []).filter(
-        (building) => building.buildingId !== buildingId,
-      );
-      setBuildings(filteredBuildings);
+      setBuildings(content || []);
       setTotalItems(meta?.total ? meta.total - 1 : 0);
     } catch (error) {
       console.error("Failed to fetch buildings:", error);
@@ -56,15 +61,18 @@ const TabContent: React.FC<TabContentProps> = ({
       setIsLoading(false);
     }
   };
+  React.useEffect(() => {
+    fetchBuildings();
+  }, [street, buildingId, city, district, currentPage]);
   return (
     <div className="mt-6">
       {/* Nội dung so sánh */}
-      {buildingId && buildings.length > 0 && dynamicData.comparison && (
+      {buildings.length > 0 && dynamicData.comparison && (
         <div
           ref={sections.comparison}
           className="mx-auto mt-6 rounded-lg border border-gray-300 bg-white p-8 shadow-lg"
         >
-          <h2 className="mb-4 text-lg font-bold text-[#3162ad]">
+          <h2 className="mb-9 text-lg font-bold text-[#3162ad]">
             CÁC VĂN PHÒNG CÙNG TUYẾN ĐƯỜNG{" "}
             {street?.toUpperCase() || "KHÔNG XÁC ĐỊNH"}
           </h2>

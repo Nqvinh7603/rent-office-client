@@ -50,7 +50,7 @@ const RequestFormModal: React.FC<RequestFormModalProps> = ({
 
   return (
     <Modal
-      title="Gửi yêu cầu thuê"
+      //title="Gửi yêu cầu thuê"
       open={visible}
       onCancel={onClose}
       footer={null}

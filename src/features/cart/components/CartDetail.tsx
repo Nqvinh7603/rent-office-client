@@ -46,9 +46,48 @@ const CartDetail: React.FC = () => {
               name: building.buildingName,
               buildingImage: building.buildingImages?.[0]?.imgUrl,
               address: `${building.buildingNumber} ${building.street}, ${building.ward}, ${building.district}, ${building.city}`,
-              rentPrice:
-                `${building.rentalPricing[building.rentalPricing.length - 1].price.toLocaleString()} VND/m²` ||
-                "N/A",
+              rentPrice: (() => {
+                if (
+                  !building?.buildingUnits ||
+                  building.buildingUnits.length === 0
+                ) {
+                  return "Giá chưa cập nhật";
+                }
+
+                const latestPrices = building.buildingUnits
+                  .map((unit) => {
+                    if (
+                      !unit?.rentalPricing ||
+                      unit.rentalPricing.length === 0
+                    ) {
+                      return null;
+                    }
+
+                    const latestPricing = unit.rentalPricing.reduce(
+                      (latest, pricing) => {
+                        if (
+                          !latest ||
+                          new Date(pricing.createdAt) >
+                            new Date(latest.createdAt)
+                        ) {
+                          return pricing;
+                        }
+                        return latest;
+                      },
+                      unit.rentalPricing[0],
+                    );
+
+                    return latestPricing ? latestPricing.price : null;
+                  })
+                  .filter((price) => price !== null);
+
+                if (latestPrices.length === 0) {
+                  return "Giá chưa cập nhật";
+                }
+
+                const minPrice = Math.min(...latestPrices);
+                return `${minPrice.toLocaleString()} VND/m²`;
+              })(),
             }))}
             columns={[
               {
