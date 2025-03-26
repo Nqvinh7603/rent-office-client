@@ -149,7 +149,7 @@ const OfficeCategoryList: React.FC<OfficeCategoryListProps> = ({
                           .join(", ")}
                         {building.buildingUnits.flatMap((unit) =>
                           unit.rentAreas.map((area) => area.area),
-                        ).length > 3 && "..."}{" "}
+                        ).length > 3 && "..."}
                         m²
                       </div>
                       <div className="mt-1 flex items-center gap-2">
