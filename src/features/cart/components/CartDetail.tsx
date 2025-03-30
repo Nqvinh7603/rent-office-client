@@ -67,15 +67,6 @@ const CartDetail: React.FC = () => {
   function handleFinish(values: ICustomerAppointment) {
     const customerData: ICustomerAppointment = {
       ...values,
-      // appointments: buildings.map((building) => ({
-      //   appointmentBuildings: [
-      //     {
-      //       buildingId: building.buildingId,
-      //       visitTime: visitTimes[building.buildingId] || "",
-      //       area: areas[building.buildingId] || "",
-      //     },
-      //   ],
-      // })),
       appointments: [
         {
           appointmentBuildings: buildings.map((building) => ({

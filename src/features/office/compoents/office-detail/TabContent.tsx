@@ -4,22 +4,12 @@ import { buildingService } from "../../../../services/building/building-service"
 
 interface TabContentProps {
   dynamicData: {
-    generalInfo: string;
-    location: string;
-    structure: string;
-    serviceFee: string;
-    advantages: string;
     comparison: React.ReactNode;
-    review: React.ReactNode;
+    //review: React.ReactNode;
   };
   sections: {
-    generalInfo: React.RefObject<HTMLDivElement>;
-    location: React.RefObject<HTMLDivElement>;
-    structure: React.RefObject<HTMLDivElement>;
-    serviceFee: React.RefObject<HTMLDivElement>;
-    advantages: React.RefObject<HTMLDivElement>;
     comparison: React.RefObject<HTMLDivElement>;
-    review: React.RefObject<HTMLDivElement>;
+    // review: React.RefObject<HTMLDivElement>;
   };
   street?: string;
   buildingId?: number;
@@ -80,7 +70,7 @@ const TabContent: React.FC<TabContentProps> = ({
         </div>
       )}
 
-      {/* Nội dung đánh giá */}
+      {/* Nội dung đánh giá
       {dynamicData.review && (
         <div
           ref={sections.review}
@@ -89,7 +79,7 @@ const TabContent: React.FC<TabContentProps> = ({
           <h2 className="mb-4 text-lg font-bold text-[#3162ad]">ĐÁNH GIÁ</h2>
           {dynamicData.review}
         </div>
-      )}
+      )} */}
     </div>
   );
 };
