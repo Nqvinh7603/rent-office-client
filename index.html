@@ -11,12 +11,32 @@
     rel="stylesheet">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0" />
+  <style>
+    df-messenger {
+      --df-messenger-bot-message: #878fac;
+      --df-messenger-button-titlebar-color: #3162ad;
+      --df-messenger-chat-background-color: #fafafa;
+      --df-messenger-font-color: white;
+      --df-messenger-send-icon: #dd0d0d;
+      --df-messenger-user-message: #EAB308;
+      right: 15px;
+      bottom: 15px;
+      position: fixed;
+      z-index: 9999;
+      margin: 0;
+      padding: 0;
+      transform: translateX(50%) translateY(50%);
+      background-image: url("img.png");
+    }
+  </style>
   <title>Cyber Real - Đơn vị văn phòng cho thuê</title>
 </head>
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+  <script
+    src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 </body>
 
 </html>

@@ -14,6 +14,18 @@ const MainLayout: React.FC = () => {
         </div>
         <Footer />
         <div className="w-full">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: `
+            <df-messenger
+        intent="WELCOME"
+        chat-title="CT553"
+        agent-id="8ac28f4a-e8b6-4b98-978e-ef21c42a985d"
+        language-code="vi"
+            ></df-messenger>
+          `,
+            }}
+          />
           <ScrollToTop />
           <CartButton />
         </div>

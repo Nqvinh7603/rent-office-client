@@ -69,9 +69,8 @@ const TabContent: React.FC<TabContentProps> = ({
           {dynamicData.comparison}
         </div>
       )}
-
-      {/* Nội dung đánh giá
-      {dynamicData.review && (
+      {/* Nội dung đánh giá */}
+      {/* {dynamicData.review && (
         <div
           ref={sections.review}
           className="mx-auto mt-6 rounded-lg border border-gray-300 bg-white p-8 shadow-lg"

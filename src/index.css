@@ -41,4 +41,19 @@
     font-size: 16px;
     line-height: 1;
   }
+  /* .df-messenger-wrapper {
+    background-color: rgb(255, 255, 255);
+    border: 0px;
+    bottom: 20px;
+    color: rgba(0, 0, 0, 0.87);
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0px;
+    padding: 0px;
+    position: fixed;
+    right: 30px;
+    text-decoration: none;
+    z-index: 100;
+  } */
 }
