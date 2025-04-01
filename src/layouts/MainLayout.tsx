@@ -17,12 +17,13 @@ const MainLayout: React.FC = () => {
           <div
             dangerouslySetInnerHTML={{
               __html: `
-            <df-messenger
-        intent="WELCOME"
-        chat-title="CT553"
-        agent-id="8ac28f4a-e8b6-4b98-978e-ef21c42a985d"
-        language-code="vi"
-            ></df-messenger>
+          <df-messenger
+  intent="WELCOME"
+  chat-title="CyberBot"
+  agent-id="5475d40f-1fa7-4a0b-a774-64cf6c792218"
+  language-code="vi"
+></df-messenger>
+
           `,
             }}
           />

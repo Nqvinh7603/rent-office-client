@@ -2,12 +2,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import AboutPage from "../pages/AboutPage";
 import CartPage from "../pages/CartPage";
-import Contact from "../pages/Contact";
 import Deposit from "../pages/Deposit";
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
 import OfficeDetailPage from "../pages/OfficeDetailPage";
 import OfficeListPage from "../pages/OfficeListPage";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
 import PrivacySecure from "../pages/PrivacySecure";
 import UpdateDeposit from "../pages/UpdateDeposit";
 
@@ -45,12 +45,9 @@ const router = createBrowserRouter([
       },
       {
         path: "chinh-sach-quyen-rieng-tu",
-        element: <PrivacySecure />,
+        element: <PrivacyPolicy />,
       },
-      {
-        path: "lien-he",
-        element: <Contact />,
-      },
+
       {
         path: "chon-di-xem",
         element: <CartPage />,

@@ -25,7 +25,6 @@ const Footer: React.FC = () => {
     },
     { name: "Chính Sách Bảo Mật", path: "/chinh-sach-bao-mat" },
     { name: "Chính Sách Quyền Riêng Tư", path: "/chinh-sach-quyen-rieng-tu" },
-    { name: "Liên Hệ", path: "/lien-he" },
   ];
 
   return (

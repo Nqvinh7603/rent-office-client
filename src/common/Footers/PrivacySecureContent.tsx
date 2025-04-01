@@ -16,7 +16,7 @@ const PrivacySecureContent: React.FC = () => {
         <h1 className="mb-6 text-2xl font-bold text-gray-900">
           Chính Sách Bảo Mật
         </h1>
-        <div className="space-y-4 text-sm leading-relaxed text-gray-700">
+        <div className="space-y-4 text-lg leading-relaxed text-gray-700">
           <p className="mb-4">
             <strong>Cyber Real</strong> luôn xem việc bảo mật thông tin được
             cung cấp bởi khách hàng, đối tác và người dùng truy cập trang web
