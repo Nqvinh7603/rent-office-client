@@ -14,7 +14,7 @@ const CartButton: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-28 right-8 z-50 flex items-center justify-center">
+    <div className="fixed bottom-24 right-4 z-50 flex items-center justify-center">
       <div
         className="relative flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-[#3162ad] text-white shadow-lg transition-all duration-300 hover:bg-[#274b8d] hover:shadow-xl"
         onClick={handleCartClick}

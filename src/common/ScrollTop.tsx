@@ -27,7 +27,7 @@ const ScrollToTop: React.FC = () => {
   return (
     <div
       onClick={scrollToTop}
-      className={`fixed bottom-48 right-8 z-50 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-[#3162ad] text-white shadow-lg transition-all duration-300 hover:bg-[#274b8d] hover:shadow-xl ${
+      className={`fixed bottom-44 right-4 z-50 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-[#3162ad] text-white shadow-lg transition-all duration-300 hover:bg-[#274b8d] hover:shadow-xl ${
         isVisible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
     >
