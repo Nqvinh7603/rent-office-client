@@ -177,6 +177,8 @@ export interface BuildingCompanyFilterCriteria {
     // buildingStatus?: BuildingStatus;
     orientation?: Orientation;
     buildingName?: string;
+    searchQuery?: string;
+    // buildingName?: string;
 }
 
 

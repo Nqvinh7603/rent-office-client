@@ -1,7 +1,5 @@
-import { AudioOutlined } from "@ant-design/icons";
 import { Button, Input, Select } from "antd";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useGetProvinces } from "../../../hooks";
 import { IDistrict, IWard } from "../../../interfaces";
 import { ORENTATION_TRANSLATIONS } from "../../../interfaces/common/constants";
@@ -11,7 +9,7 @@ import { formatCurrency } from "../../../utils";
 
 const SearchPanel: React.FC = () => {
   const { provinces } = useGetProvinces();
-  const navigate = useNavigate();
+
   const selectedRegion = useAppSelector((state) => state.region.selectedRegion);
   const [districtOptions, setDistrictOptions] = useState<IDistrict[]>([]);
   const [wardOptions, setWardOptions] = useState<IWard[]>([]);
@@ -24,6 +22,8 @@ const SearchPanel: React.FC = () => {
   const [selectedDirection, setSelectedDirection] = useState<string | null>(
     null,
   );
+
+  const [buildingName, setBuildingName] = useState<string>("");
 
   useEffect(() => {
     const region = provinces?.find(
@@ -48,6 +48,7 @@ const SearchPanel: React.FC = () => {
     setSelectedArea(null);
     setSelectedPrice(null);
     setSelectedDirection(null);
+    setBuildingName("");
   }, [selectedRegion]);
 
   useEffect(() => {
@@ -126,7 +127,10 @@ const SearchPanel: React.FC = () => {
       queryParams.append("orientation", selectedDirection);
     }
 
-    // Navigate to the OfficeList page with the constructed query string
+    if (buildingName) {
+      queryParams.append("buildingName", buildingName);
+    }
+
     window.location.href = `/van-phong?${queryParams.toString()}`;
   };
 
@@ -136,34 +140,13 @@ const SearchPanel: React.FC = () => {
         <Input
           placeholder="Nhập tên tòa nhà, ví dụ: Vincom, Vietcombank, International Plaza..."
           className="col-span-3 rounded-md border px-4 py-2 md:col-span-3 lg:col-span-3"
-          suffix={
-            <AudioOutlined
-              style={{
-                fontSize: 16,
-              }}
-              onClick={() => {
-                if (
-                  navigator.mediaDevices &&
-                  navigator.mediaDevices.getUserMedia
-                ) {
-                  navigator.mediaDevices
-                    .getUserMedia({ audio: true })
-                    .then((stream) => {
-                      console.log("Voice input activated");
-                    })
-                    .catch((err) => {
-                      console.error("Error accessing audio input: ", err);
-                    });
-                } else {
-                  console.error("getUserMedia not supported on your browser!");
-                }
-              }}
-            />
-          }
+          value={buildingName} // Bind input value to state
+          onChange={(e) => setBuildingName(e.target.value)} // Update
         />
         <Button
           type="primary"
           className="py-4 text-white"
+          htmlType="submit"
           onClick={handleSearch}
         >
           TÌM KIẾM

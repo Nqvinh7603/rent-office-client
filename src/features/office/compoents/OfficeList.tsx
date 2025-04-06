@@ -58,6 +58,7 @@ const OfficeList: React.FC = () => {
   const maxPrice = searchParams.get("maxPrice");
   const minArea = searchParams.get("minArea");
   const maxArea = searchParams.get("maxArea");
+  const buildingName = searchParams.get("buildingName");
   const fetchBuildings = async () => {
     setIsLoading(true);
     try {
@@ -74,6 +75,7 @@ const OfficeList: React.FC = () => {
           ...(maxPrice ? { maxPrice: Number(maxPrice) } : {}),
           ...(minArea ? { minArea: Number(minArea) } : {}),
           ...(maxArea ? { maxArea: Number(maxArea) } : {}),
+          ...(buildingName ? { buildingName: buildingName } : {}),
         },
       );
       const { content, meta } = response.payload || {};
